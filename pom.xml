@@ -35,6 +35,8 @@
     <org.mockito.mockio-core.version>4.8.0</org.mockito.mockio-core.version>
     <org.testcontainers.junit-jupiter.version>1.17.3</org.testcontainers.junit-jupiter.version>
     <system-stubs-jupiter.version>2.0.1</system-stubs-jupiter.version>
+    <unboudid-sdk.version>6.0.6</unboudid-sdk.version>
+    <ldap-junit.version>0.9.0</ldap-junit.version>
   </properties>
 
   <build>
@@ -98,6 +100,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.unboundid</groupId>
+      <artifactId>unboundid-ldapsdk</artifactId>
+      <version>${unboudid-sdk.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
       <version>${org.testcontainers.junit-jupiter.version}</version>
@@ -126,6 +133,11 @@
       <artifactId>system-stubs-jupiter</artifactId>
       <version>${system-stubs-jupiter.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.zapodot</groupId>
+      <artifactId>embedded-ldap-junit</artifactId>
+      <version>${ldap-junit.version}</version>
     </dependency>
   </dependencies>
 </project>
