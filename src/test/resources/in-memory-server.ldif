@@ -3,7 +3,7 @@ objectClass: domain
 objectClass: top
 dc: example
 
-dn: ou=Users,dc=example,dc=com
+dn: ou=users,dc=example,dc=com
 objectClass: organizationalUnit
 objectClass: top
 ou: Users
@@ -13,7 +13,7 @@ objectClass: organizationalUnit
 objectClass: top
 ou: Groups
 
-dn: cn=Micha Kops,ou=Users,dc=example,dc=com
+dn: cn=Micha Kops,ou=users,dc=example,dc=com
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
@@ -23,7 +23,7 @@ sn: Kops
 uid: mkops
 userPassword: abcdefg
 
-dn: cn=Santa Claus,ou=Users,dc=example,dc=com
+dn: cn=Santa Claus,ou=users,dc=example,dc=com
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
@@ -33,7 +33,7 @@ sn: Claus
 uid: sclaus
 userPassword: abcdefg
 
-dn: cn=John Steinbeck,ou=Users,dc=example,dc=com
+dn: cn=John Steinbeck,ou=users,dc=example,dc=com
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson

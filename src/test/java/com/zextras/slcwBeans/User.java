@@ -1,15 +1,27 @@
 package com.zextras.slcwBeans;
 
 import com.zextras.SlcwBean;
-import java.util.HashMap;
-import java.util.Map;
+import com.zextras.slcwPersistence.annotations.Attribute;
+import com.zextras.slcwPersistence.annotations.Entity;
+import com.zextras.slcwPersistence.annotations.ObjectClass;
+import com.zextras.slcwPersistence.annotations.UID;
 
+@Entity(name = "users")
 public class User implements SlcwBean {
+  @UID(name = "cn")
+  private String uid;
+  @ObjectClass
+  private String objectClass;
+  @Attribute(name = "givenName")
   private String name;
+  @Attribute(name = "sn")
   private String surname;
+  @Attribute(name = "homePhone")
   private long phoneNumber;
 
-  public User(String name, String surname, long number) {
+  public User(String objectClass, String name, String surname, long number) {
+    this.uid = name + " " + surname;
+    this.objectClass = objectClass;
     this.name = name;
     this.surname = surname;
     this.phoneNumber = number;
@@ -27,12 +39,31 @@ public class User implements SlcwBean {
     this.phoneNumber = phoneNumber;
   }
 
-  @Override
-  public Map<String, Object> toMap() {
-    Map<String, Object> userObject = new HashMap<>();
-    userObject.put("givenName", this.name);
-    userObject.put("sn", this.surname);
-    userObject.put("homePhone", this.phoneNumber);
-    return userObject;
+  public String getName() {
+    return name;
+  }
+
+  public String getSurname() {
+    return surname;
+  }
+
+  public long getPhoneNumber() {
+    return phoneNumber;
+  }
+
+  public String getObjectClass() {
+    return objectClass;
+  }
+
+  public String getUid() {
+    return uid;
+  }
+
+  public void setUid(String uid) {
+    this.uid = uid;
+  }
+
+  public void setObjectClass(String objectClass) {
+    this.objectClass = objectClass;
   }
 }
