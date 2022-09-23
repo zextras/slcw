@@ -1,10 +1,12 @@
 package com.zextras;
 
 import com.unboundid.ldap.sdk.*;
-import com.zextras.slcwPersistence.annotations.Entity;
-import com.zextras.slcwPersistence.annotations.ObjectClass;
 import com.zextras.slcwPersistence.annotations.UID;
-import com.zextras.slcwPersistence.Uid;
+import com.zextras.slcwPersistence.mapping.Field;
+import com.zextras.slcwPersistence.annotations.Entity;
+import com.zextras.slcwPersistence.mapping.SlcwMapper;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /** FIXME add actual documentation when it will be implemented */
@@ -28,19 +30,36 @@ public class SlcwClient {
     }
   }
 
-  public LDAPResult add(final SlcwBean bean) {
-    Map<String, Object> map = toAttributeList(bean);
-    Uid uid = (Uid) map.get("uid");
+  //todo better design
+  public <T extends SlcwBean> T getByUID(final String uid, final Class<T> clazz) {
+    var fields = clazz.getDeclaredFields();
+    var filter = Arrays.stream(fields).filter(field -> field.isAnnotationPresent(UID.class)).findFirst().map(field -> field.getAnnotation(UID.class).name() + "=" + uid);
+    String baseDn = "ou=" + clazz.getAnnotation(Entity.class).name() + ",dc=example,dc=com";
+    List<SearchResultEntry> searchResultEntries = search(baseDn, SearchScope.ONE, filter.get());
+    SearchResultEntry entry = searchResultEntries.get(0);
+    entry.getAttributes();
+    T bean;
+    try {
+      bean = clazz.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
+    return null;
+  }
 
+  public LDAPResult add(final SlcwBean bean) {
+    Map<String, List<Field>> map = SlcwMapper.mapFields(bean);
+    Field uid = map.get("uid").get(0);
+    // todo
     String dn =
-        uid.getKey()
+        uid.getFieldName()
             + "="
-            + uid.getValue()
+            + uid.getFiledValue()
             + ",ou="
             + bean.getClass().getAnnotation(Entity.class).name()
             + ",dc=example,dc=com";
 
-    List<Attribute> attributes = (List<Attribute>) map.get("attributes");
+    List<Attribute> attributes = SlcwMapper.toAttributeList(map.get("fields"));
     try {
       return connection.add(dn, attributes);
     } catch (LDAPException e) {
@@ -48,103 +67,50 @@ public class SlcwClient {
     }
   }
 
-  private Map<String, Object> toAttributeList(final SlcwBean bean) {
-    var declaredFields = bean.getClass().getDeclaredFields();
-
-    Map<String, Object> map = new HashMap<>();
-    List<Attribute> attributes = new ArrayList<>();
-
-    Arrays.stream(declaredFields)
-        .forEach(
-            field -> {
-              field.setAccessible(true);
-              if (field.isAnnotationPresent(UID.class)) {
-                var key = field.getAnnotation(UID.class).name();
-                String value;
-                try {
-                  value = String.valueOf(field.get(bean));
-                } catch (IllegalAccessException e) {
-                  throw new RuntimeException(e);
-                }
-                Uid uid = new Uid(key, value);
-                map.put("uid", uid);
-              } else if (field.isAnnotationPresent(ObjectClass.class)) {
-                var key = field.getAnnotation(ObjectClass.class).name();
-                String value;
-                try {
-                  value = String.valueOf(field.get(bean));
-                } catch (IllegalAccessException e) {
-                  throw new RuntimeException(e);
-                }
-                attributes.add(new Attribute(key, value));
-              } else if (field.isAnnotationPresent(com.zextras.slcwPersistence.annotations.Attribute.class)) {
-                var key = field.getAnnotation(com.zextras.slcwPersistence.annotations.Attribute.class).name();
-                String value;
-                try {
-                  value = String.valueOf(field.get(bean));
-                } catch (IllegalAccessException e) {
-                  throw new RuntimeException(e);
-                }
-                attributes.add(new Attribute(key, value));
-              }
-            });
-
-    map.put("attributes", attributes);
-    return map;
+  public LDAPResult update(final SlcwBean bean) {
+    Map<String, List<Field>> map = SlcwMapper.mapFields(bean);
+    Field uid = map.get("uid").get(0);
+    // todo
+    String dn =
+        uid.getFieldName()
+            + "="
+            + uid.getFiledValue()
+            + ",ou="
+            + bean.getClass().getAnnotation(Entity.class).name()
+            + ",dc=example,dc=com";
+    List<Modification> modifications = SlcwMapper.toModificationList(map.get("fields"));
+    try {
+      return connection.modify(dn, modifications);
+    } catch (LDAPException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-  //  public LDAPResult add(final String dn, final String objectClass, final SlcwBean bean) {
-  //    List<Attribute> attributes = toAttributeList(objectClass, bean);
-  //    try {
-  //      return connection.add(dn, attributes);
-  //    } catch (LDAPException e) {
-  //      throw new RuntimeException(e);
-  //    }
-  //  }
-  //
-  //  public LDAPResult modify(final String dn, final SlcwBean bean) {
-  //    List<Modification> modifications = toModificationList(bean);
-  //    try {
-  //      return connection.modify(dn, modifications);
-  //    } catch (LDAPException e) {
-  //      throw new RuntimeException(e);
-  //    }
-  //  }
-  //
-  //  public LDAPResult delete(final String dn) {
-  //    try {
-  //      return connection.delete(dn);
-  //    } catch (LDAPException e) {
-  //      throw new RuntimeException(e);
-  //    }
-  //  }
-  //
-  //  public List<SearchResultEntry> search(final String baseDN, final SearchScope searchScope,
-  // final String filter) {
-  //    SearchResult searchResult;
-  //    try {
-  //      searchResult = connection.search(baseDN, searchScope, filter);
-  //    } catch (LDAPSearchException e) {
-  //      throw new RuntimeException(e);
-  //    }
-  //    return searchResult.getSearchEntries();
-  //  }
-  //
-  //  private List<Modification> toModificationList(final SlcwBean bean) {
-  //    Map<String, Object> beanEntry = bean.toMap();
-  //
-  //    List<Modification> modifications = new ArrayList<>();
-  //    for (Map.Entry<String, Object> entry : beanEntry.entrySet()) {
-  //      if (entry.getValue() instanceof byte[]) {
-  //        modifications.add(
-  //            new Modification(ModificationType.REPLACE, entry.getKey(), (byte[])
-  // entry.getValue()));
-  //      } else {
-  //        modifications.add(
-  //            new Modification(
-  //                ModificationType.REPLACE, entry.getKey(), entry.getValue().toString()));
-  //      }
-  //    }
-  //    return modifications;
-  //  }
+    public LDAPResult delete(final SlcwBean bean) {
+      Map<String, List<Field>> map = SlcwMapper.mapFields(bean);
+      Field uid = map.get("uid").get(0);
+      // todo
+      String dn =
+              uid.getFieldName()
+                      + "="
+                      + uid.getFiledValue()
+                      + ",ou="
+                      + bean.getClass().getAnnotation(Entity.class).name()
+                      + ",dc=example,dc=com";
+      try {
+        return connection.delete(dn);
+      } catch (LDAPException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+  public List<SearchResultEntry> search(final String baseDN, final SearchScope searchScope, final String filter) {
+    SearchResult searchResult;
+    try {
+      searchResult = connection.search(baseDN, searchScope, filter);
+    } catch (LDAPSearchException e) {
+      throw new RuntimeException(e);
+    }
+    return searchResult.getSearchEntries();
+  }
 }

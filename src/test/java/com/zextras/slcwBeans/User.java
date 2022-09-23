@@ -18,6 +18,9 @@ public class User implements SlcwBean {
   private String surname;
   @Attribute(name = "homePhone")
   private long phoneNumber;
+  private int anotherField;
+
+  public User() {}
 
   public User(String objectClass, String name, String surname, long number) {
     this.uid = name + " " + surname;
@@ -43,6 +46,14 @@ public class User implements SlcwBean {
     return name;
   }
 
+  public void setUid(String uid) {
+    this.uid = uid;
+  }
+
+  public void setObjectClass(String objectClass) {
+    this.objectClass = objectClass;
+  }
+
   public String getSurname() {
     return surname;
   }
@@ -57,13 +68,5 @@ public class User implements SlcwBean {
 
   public String getUid() {
     return uid;
-  }
-
-  public void setUid(String uid) {
-    this.uid = uid;
-  }
-
-  public void setObjectClass(String objectClass) {
-    this.objectClass = objectClass;
   }
 }
