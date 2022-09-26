@@ -9,6 +9,7 @@ public class SlcwMapper {
   public static <T> void map(T object, SlcwEntry entry) {
     mapFields(object, entry);
 
+    //todo builder or smth
     String dn =
         entry.getId().getFieldName()
             + "="
@@ -26,6 +27,7 @@ public class SlcwMapper {
   public static <T> void map(SlcwEntry entry, T object) {
     mapFields(object, entry);
 
+    //todo builder or smth
     String dn =
         object.getClass().getAnnotation(Table.class).property()
             + "="
