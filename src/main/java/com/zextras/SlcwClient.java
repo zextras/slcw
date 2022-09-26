@@ -1,9 +1,10 @@
 package com.zextras;
 
 import com.unboundid.ldap.sdk.*;
-import com.zextras.slcwPersistence.converting.SlcwConverter;
-import com.zextras.slcwPersistence.mapping.SlcwEntry;
-import com.zextras.slcwPersistence.mapping.SlcwMapper;
+import com.zextras.handler.SlcwException;
+import com.zextras.persistence.converting.SlcwConverter;
+import com.zextras.persistence.mapping.SlcwEntry;
+import com.zextras.persistence.mapping.SlcwMapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -49,7 +50,7 @@ public class SlcwClient {
     var searchResult = search(entry.getDn(), SearchScope.ONE, filter);
 
     if (searchResult.isEmpty()) {
-      throw new RuntimeException("Nothing found");
+      throw new SlcwException(String.format("Object %d not found.", id));
     }
 
     var searchResultEntry = searchResult.get(0);

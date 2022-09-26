@@ -1,13 +1,13 @@
-package com.zextras.slcwPersistence.annotations;
+package com.zextras.persistence.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Table {
-    String name();
-    String property() default "";
+public @interface ObjectClass {
+    String name() default "objectClass";
+    boolean binary() default false;
 }

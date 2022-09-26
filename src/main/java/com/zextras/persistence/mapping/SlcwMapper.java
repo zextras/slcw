@@ -1,13 +1,12 @@
-package com.zextras.slcwPersistence.mapping;
+package com.zextras.persistence.mapping;
 
 import com.unboundid.ldap.sdk.SearchResultEntry;
-import com.zextras.slcwPersistence.ReflectionUtils;
-import com.zextras.slcwPersistence.annotations.*;
+import com.zextras.persistence.ReflectionUtils;
+import com.zextras.persistence.annotations.*;
 import java.util.*;
 
 public class SlcwMapper {
   public static <T> void map(T object, SlcwEntry entry) {
-    // todo check if its entity
     mapFields(object, entry);
 
     String dn =
@@ -25,7 +24,6 @@ public class SlcwMapper {
   }
 
   public static <T> void map(SlcwEntry entry, T object) {
-    // todo check if its entity
     mapFields(object, entry);
 
     String dn =
@@ -39,6 +37,10 @@ public class SlcwMapper {
   }
 
   public static <T> void mapFields(T object, SlcwEntry entry) {
+    if (!object.getClass().isAnnotationPresent(Entity.class)) {
+      throw new RuntimeException("Class should be mark with @Entity annotation.");
+    }
+
     var mapEntry = entry.getFields();
 
     var declaredFields = object.getClass().getDeclaredFields();
@@ -68,7 +70,7 @@ public class SlcwMapper {
                 }
                 mapEntry.put(key, new SlcwField(key, value));
               } else if (field.isAnnotationPresent(
-                  com.zextras.slcwPersistence.annotations.Column.class)) {
+                  com.zextras.persistence.annotations.Column.class)) {
                 var annotationProperty = field.getAnnotation(Column.class);
                 var key = annotationProperty.name();
                 boolean binary = annotationProperty.binary();

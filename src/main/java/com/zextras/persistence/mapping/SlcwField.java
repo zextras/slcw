@@ -1,4 +1,4 @@
-package com.zextras.slcwPersistence.mapping;
+package com.zextras.persistence.mapping;
 
 public class SlcwField {
   private String fieldName;

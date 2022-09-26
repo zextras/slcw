@@ -1,4 +1,4 @@
-package com.zextras.slcwPersistence;
+package com.zextras.persistence;
 
 import java.lang.reflect.Field;
 

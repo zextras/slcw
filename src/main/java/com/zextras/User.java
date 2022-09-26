@@ -1,6 +1,6 @@
 package com.zextras;
 
-import com.zextras.slcwPersistence.annotations.*;
+import com.zextras.persistence.annotations.*;
 
 import java.util.Objects;
 

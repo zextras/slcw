@@ -1,9 +1,9 @@
-package com.zextras.slcwPersistence.converting;
+package com.zextras.persistence.converting;
 
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
-import com.zextras.slcwPersistence.mapping.SlcwEntry;
+import com.zextras.persistence.mapping.SlcwEntry;
 
 import java.util.List;
 import java.util.stream.Collectors;

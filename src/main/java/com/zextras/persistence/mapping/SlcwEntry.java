@@ -1,4 +1,4 @@
-package com.zextras.slcwPersistence.mapping;
+package com.zextras.persistence.mapping;
 
 import java.util.HashMap;
 import java.util.Map;

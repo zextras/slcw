@@ -1,4 +1,4 @@
-package com.zextras.slcwPersistence.annotations;
+package com.zextras.persistence.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
