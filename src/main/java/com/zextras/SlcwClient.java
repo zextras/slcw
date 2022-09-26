@@ -3,26 +3,26 @@ package com.zextras;
 import com.unboundid.ldap.sdk.*;
 import com.zextras.slcwPersistence.converting.SlcwConverter;
 import com.zextras.slcwPersistence.mapping.SlcwEntry;
-import com.zextras.slcwPersistence.mapping.SlcwField;
 import com.zextras.slcwPersistence.mapping.SlcwMapper;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /** FIXME add actual documentation when it will be implemented */
 public class SlcwClient {
   private LDAPConnection connection;
+  private String baseDn;
 
-  public SlcwClient(final LDAPConnection connection) {
+  public SlcwClient(LDAPConnection connection, String baseDn) {
+    this.baseDn = baseDn;
     this.connection = connection;
   }
 
-  public SlcwClient(final String host, final int port, final String bindDN, final String password) {
+  public SlcwClient(String host, int port, String bindDN, String password, String baseDn) {
+    this.baseDn = baseDn;
     connect(host, port, bindDN, password);
   }
 
-  private void connect(
-      final String host, final int port, final String bindDN, final String password) {
+  private void connect(final String host, final int port, final String bindDN, final String password) {
     try {
       connection = new LDAPConnection(host, port, bindDN, password);
     } catch (LDAPException e) {
@@ -31,29 +31,34 @@ public class SlcwClient {
   }
 
   public <T> T getById(final String id, final Class<T> clazz) {
-
     T object;
     try {
       object = clazz.getDeclaredConstructor().newInstance();
-    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+    } catch (InstantiationException
+        | IllegalAccessException
+        | NoSuchMethodException
+        | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
 
-    SlcwEntry entry = new SlcwEntry();
+    SlcwEntry entry = new SlcwEntry(baseDn);
     SlcwMapper.map(entry, object);
 
-    String filter = entry.getId().getFieldName()
-            + "="
-            + id;
+    String filter = entry.getId().getFieldName() + "=" + id;
 
-    var searchResult = search(entry.getDn(), SearchScope.ONE, filter).get(0);
-    entry.setSearchResultEntry(searchResult);
-    SlcwConverter.convertFromSearchResult(entry, object);
+    var searchResult = search(entry.getDn(), SearchScope.ONE, filter);
+
+    if (searchResult.isEmpty()) {
+      throw new RuntimeException("Nothing found");
+    }
+
+    var searchResultEntry = searchResult.get(0);
+    SlcwMapper.mapSearchResult(searchResultEntry, entry, object);
     return object;
   }
 
   public <T> LDAPResult add(final T object) {
-    SlcwEntry entry = new SlcwEntry();
+    SlcwEntry entry = new SlcwEntry(baseDn);
     SlcwMapper.map(object, entry);
 
     List<Attribute> attributes = SlcwConverter.convertToAttributes(entry);
@@ -64,8 +69,8 @@ public class SlcwClient {
     }
   }
 
-  public <T> LDAPResult update(final T object) {
-    SlcwEntry entry = new SlcwEntry();
+  public <T> LDAPResult update(T object) {
+    SlcwEntry entry = new SlcwEntry(baseDn);
     SlcwMapper.map(object, entry);
     List<Modification> modifications = SlcwConverter.convertToModifications(entry);
     try {
@@ -75,17 +80,17 @@ public class SlcwClient {
     }
   }
 
-    public <T> LDAPResult delete(final T object) {
-      SlcwEntry entry = new SlcwEntry();
-      SlcwMapper.map(object, entry);
-      try {
-        return connection.delete(entry.getDn());
-      } catch (LDAPException e) {
-        throw new RuntimeException(e);
-      }
+  public <T> LDAPResult delete(T object) {
+    SlcwEntry entry = new SlcwEntry(baseDn);
+    SlcwMapper.map(object, entry);
+    try {
+      return connection.delete(entry.getDn());
+    } catch (LDAPException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-  public List<SearchResultEntry> search(final String baseDN, final SearchScope searchScope, final String filter) {
+  public List<SearchResultEntry> search(String baseDN, SearchScope searchScope, String filter) {
     SearchResult searchResult;
     try {
       searchResult = connection.search(baseDN, searchScope, filter);

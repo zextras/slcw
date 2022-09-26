@@ -20,7 +20,7 @@ public class SlcwClientTests {
 
   @Test
   public void shouldSuccessfullySearch() throws LDAPException {
-    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection());
+    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection(), "dc=example,dc=com");
     final List<SearchResultEntry> searchResult =
         client.search("dc=example,dc=com", SearchScope.SUB, "objectClass=person");
     assertEquals(3, searchResult.size());
@@ -31,7 +31,7 @@ public class SlcwClientTests {
 
   @Test
   public void shouldGetById() throws LDAPException {
-    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection());
+    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection(), "dc=example,dc=com");
     final User expectedUser = new User("inetOrgPerson","Name", "Surname", 6785949);
     client.add(expectedUser);
     User actualUser = client.getById("Name Surname", User.class);
@@ -40,7 +40,7 @@ public class SlcwClientTests {
   }
   @Test
   public void shouldReturnSuccessOnAddOperation() throws LDAPException {
-    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection());
+    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection(), "dc=example,dc=com");
     final User user = new User("inetOrgPerson","Name", "Surname", 6785949);
     final LDAPResult result = client.add(user);
     assertEquals(ResultCode.valueOf(0), result.getResultCode());
@@ -48,7 +48,7 @@ public class SlcwClientTests {
 
   @Test
   public void shouldReturnSuccessOnDeleteOperation() throws LDAPException {
-    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection());
+    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection(), "dc=example,dc=com");
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
 
     client.add(user);
@@ -65,7 +65,7 @@ public class SlcwClientTests {
 
   @Test
   public void shouldReturnSuccessOnModifyOperation() throws LDAPException {
-    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection());
+    final SlcwClient client = new SlcwClient(embeddedLdapRule.unsharedLdapConnection(), "dc=example,dc=com");
     final User user = new User("inetOrgPerson","Name", "Surname", 6785949);
 
     client.add(user);

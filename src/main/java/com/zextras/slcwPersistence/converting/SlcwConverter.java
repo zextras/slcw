@@ -9,29 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SlcwConverter {
-
-    public static<T> void convertFromSearchResult(SlcwEntry entry, T object) {
-        entry.getSearchResultEntry().getAttributes()
-                .forEach(attribute -> {
-                    var field = entry.getFields().get(attribute.getName());
-                    if (field != null) {
-                    var fieldName = field.getFieldName();
-                    java.lang.reflect.Field declaredField;
-                    try {
-                      declaredField  = object.getClass().getDeclaredField(fieldName);
-                    } catch (NoSuchFieldException e) {
-                        throw new RuntimeException(e);
-                    }
-                    declaredField.setAccessible(true);
-                    try {
-                        //todo parse from string
-                        declaredField.set(object, attribute.getValue());
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                }});
-    }
-
     public static List<Attribute> convertToAttributes(SlcwEntry entry) {
         return entry.getFields().entrySet().stream()
                 .map(field -> {
@@ -60,5 +37,4 @@ public class SlcwConverter {
                 }).collect(Collectors.toList());
 
     }
-
 }

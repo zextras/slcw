@@ -16,8 +16,11 @@ public class User {
     @Column(name = "sn")
     private String surname;
     @Column(name = "homePhone")
-    private String phoneNumber;
+    private long phoneNumber;
+    @Column(name = "photo", binary = true)
+    private byte[] photo;
     private int anotherField;
+    private Integer integerField;
 
     public User() {
     }
@@ -27,7 +30,7 @@ public class User {
         this.objectClass = objectClass;
         this.name = name;
         this.surname = surname;
-        this.phoneNumber = String.valueOf(number);
+        this.phoneNumber = number;
     }
 
     public void setName(String name) {
@@ -39,7 +42,7 @@ public class User {
     }
 
     public void setPhoneNumber(long phoneNumber) {
-        this.phoneNumber = String.valueOf(phoneNumber);
+        this.phoneNumber = phoneNumber;
     }
 
     public String getName() {
@@ -59,7 +62,7 @@ public class User {
     }
 
     public long getPhoneNumber() {
-        return Long.parseLong(phoneNumber);
+        return phoneNumber;
     }
 
     public String getObjectClass() {
@@ -81,5 +84,21 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(uid, objectClass, name, surname, phoneNumber, anotherField);
+    }
+
+    public int getAnotherField() {
+        return anotherField;
+    }
+
+    public Integer getIntegerField() {
+        return integerField;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 }
