@@ -2,6 +2,7 @@ package com.zextras;
 
 import com.unboundid.ldap.sdk.*;
 import com.zextras.handler.SlcwException;
+import com.zextras.handler.OperationResult;
 import com.zextras.persistence.converting.SlcwConverter;
 import com.zextras.persistence.mapping.SlcwEntry;
 import com.zextras.persistence.mapping.SlcwMapper;
@@ -50,7 +51,7 @@ public class SlcwClient {
     var searchResult = search(entry.getDn(), SearchScope.ONE, filter);
 
     if (searchResult.isEmpty()) {
-      throw new SlcwException(String.format("Object %d not found.", id));
+      throw new SlcwException(String.format("Object %s not found.", id));
     }
 
     var searchResultEntry = searchResult.get(0);
@@ -58,40 +59,43 @@ public class SlcwClient {
     return object;
   }
 
-  public <T> LDAPResult add(final T object) {
+  public <T> OperationResult add(final T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
     SlcwMapper.map(object, entry);
 
     List<Attribute> attributes = SlcwConverter.convertToAttributes(entry);
     try {
-      return connection.add(entry.getDn(), attributes);
+      LDAPResult result =  connection.add(entry.getDn(), attributes);
+      return new OperationResult(result.getResultCode().getName(), result.getResultCode().intValue());
     } catch (LDAPException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public <T> LDAPResult update(T object) {
+  public <T> OperationResult update(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
     SlcwMapper.map(object, entry);
     List<Modification> modifications = SlcwConverter.convertToModifications(entry);
     try {
-      return connection.modify(entry.getDn(), modifications);
+      LDAPResult result = connection.modify(entry.getDn(), modifications);
+      return new OperationResult(result.getResultCode().getName(), result.getResultCode().intValue());
     } catch (LDAPException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public <T> LDAPResult delete(T object) {
+  public <T> OperationResult delete(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
     SlcwMapper.map(object, entry);
     try {
-      return connection.delete(entry.getDn());
+      LDAPResult result = connection.delete(entry.getDn());
+      return new OperationResult(result.getResultCode().getName(), result.getResultCode().intValue());
     } catch (LDAPException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public List<SearchResultEntry> search(String baseDN, SearchScope searchScope, String filter) {
+  private List<SearchResultEntry> search(String baseDN, SearchScope searchScope, String filter) {
     SearchResult searchResult;
     try {
       searchResult = connection.search(baseDN, searchScope, filter);

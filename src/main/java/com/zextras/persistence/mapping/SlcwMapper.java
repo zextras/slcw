@@ -1,7 +1,7 @@
 package com.zextras.persistence.mapping;
 
 import com.unboundid.ldap.sdk.SearchResultEntry;
-import com.zextras.persistence.ReflectionUtils;
+import com.zextras.utils.ReflectionUtils;
 import com.zextras.persistence.annotations.*;
 import java.util.*;
 
