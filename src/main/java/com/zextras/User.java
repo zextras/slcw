@@ -1,4 +1,4 @@
-package com.zextras.slcwBeans;
+package com.zextras;
 
 import com.zextras.slcwPersistence.annotations.*;
 

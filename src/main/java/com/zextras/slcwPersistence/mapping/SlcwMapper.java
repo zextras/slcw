@@ -1,90 +1,81 @@
 package com.zextras.slcwPersistence.mapping;
 
-import com.unboundid.ldap.sdk.Attribute;
-import com.unboundid.ldap.sdk.Modification;
-import com.unboundid.ldap.sdk.ModificationType;
-import com.zextras.SlcwBean;
-import com.zextras.slcwPersistence.annotations.ObjectClass;
-import com.zextras.slcwPersistence.annotations.UID;
+import com.zextras.slcwPersistence.annotations.*;
+
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SlcwMapper {
-  public static Map<String, List<Field>> mapFields(final SlcwBean bean) {
-    var declaredFields = bean.getClass().getDeclaredFields();
+    public static <T> void map(T object, SlcwEntry entry) {
+        //todo check if its entity
+        mapFields(object, entry);
 
-    Map<String, List<Field>> map = new HashMap<>();
+        String dn = entry.getId().getFieldName()
+                + "="
+                + entry.getId().getFiledValue()
+                + ","
+                + object.getClass().getAnnotation(Table.class).property()
+                + "="
+                + object.getClass().getAnnotation(Table.class).name()
+                + ",dc=example,dc=com"; //todo how better set baseDn
 
-    List<Field> fields = new ArrayList<>();
+        entry.setDn(dn);
+    }
 
-    Arrays.stream(declaredFields)
-        .forEach(
-            field -> {
-              field.setAccessible(true);
-              if (field.isAnnotationPresent(UID.class)) {
-                var key = field.getAnnotation(UID.class).name();
-                String value;
-                try {
-                  value = String.valueOf(field.get(bean));
-                } catch (IllegalAccessException e) {
-                  throw new RuntimeException(e);
-                }
-                map.put("uid", List.of(new Field(key, value)));
-              } else if (field.isAnnotationPresent(ObjectClass.class)) {
-                var key = field.getAnnotation(ObjectClass.class).name();
-                String value;
-                try {
-                  value = String.valueOf(field.get(bean));
-                } catch (IllegalAccessException e) {
-                  throw new RuntimeException(e);
-                }
-                fields.add(new Field(key, value));
-              } else if (field.isAnnotationPresent(
-                  com.zextras.slcwPersistence.annotations.Attribute.class)) {
-                var key =
-                    field
-                        .getAnnotation(com.zextras.slcwPersistence.annotations.Attribute.class)
-                        .name();
-                String value;
-                try {
-                  value = String.valueOf(field.get(bean));
-                } catch (IllegalAccessException e) {
-                  throw new RuntimeException(e);
-                }
-                fields.add(new Field(key, value));
-              }
-            });
-    map.put("fields", fields);
-    return map;
-  }
+    public static <T> void map(SlcwEntry entry, T object) {
+        //todo check if its entity
+        mapFields(object, entry);
 
-  public static List<Attribute> toAttributeList(List<Field> fields) {
-    return fields.stream()
-        .map(
-            field -> {
-              if (field.getFiledValue() instanceof byte[]) {
-                return new Attribute(field.getFieldName(), (byte[]) field.getFiledValue());
-              } else {
-                return new Attribute(field.getFieldName(), String.valueOf(field.getFiledValue()));
-              }
-            })
-        .collect(Collectors.toList());
-  }
+        String dn = object.getClass().getAnnotation(Table.class).property()
+                + "="
+                + object.getClass().getAnnotation(Table.class).name()
+                + ",dc=example,dc=com"; //todo how better set baseDn
 
-  public static List<Modification> toModificationList(List<Field> fields) {
-    return fields.stream()
-        .map(
-            field -> {
-              if (field.getFiledValue() instanceof byte[]) {
-                return new Modification(
-                    ModificationType.REPLACE, field.getFieldName(), (byte[]) field.getFiledValue());
-              } else {
-                return new Modification(
-                    ModificationType.REPLACE,
-                    field.getFieldName(),
-                    String.valueOf(field.getFiledValue()));
-              }
-            })
-        .collect(Collectors.toList());
-  }
+        entry.setDn(dn);
+    }
+
+    public static <T> void mapFields(T object, SlcwEntry entry) {
+        var mapEntry = entry.getFields();
+
+        var declaredFields = object.getClass().getDeclaredFields();
+        Arrays.stream(declaredFields)
+                .forEach(field -> {
+                    field.setAccessible(true);
+                    if (field.isAnnotationPresent(Id.class)) {
+                        var annotationProperty = field.getAnnotation(Id.class);
+                        var key = annotationProperty.name();
+                        String value;
+                        try {
+                            value = String.valueOf(field.get(object));
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                        entry.setId(new SlcwField(key, value));
+                        mapEntry.put(key, new SlcwField(field.getName(), value));
+                    } else if (field.isAnnotationPresent(ObjectClass.class)) {
+                        var annotationProperty = field.getAnnotation(ObjectClass.class);
+                        var key = annotationProperty.name();
+                        Object value;
+                        try {
+                            value = (field.get(object));
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                        entry.setObjectClass(new SlcwField(key, value));
+                        mapEntry.put(key, new SlcwField(key, value));
+                    } else if (field.isAnnotationPresent(
+                            com.zextras.slcwPersistence.annotations.Column.class)) {
+                        var annotationProperty = field.getAnnotation(Column.class);
+                        var key = annotationProperty.name();
+                        boolean binary = annotationProperty.binary();
+                        Object value;
+                        try {
+                            value = field.get(object);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                        mapEntry.put(key, new SlcwField(field.getName(), value, binary));
+                    }
+                });
+    }
+
 }

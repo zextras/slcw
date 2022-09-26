@@ -1,9 +1,9 @@
 package com.zextras;
 
 import com.unboundid.ldap.sdk.*;
-import com.zextras.slcwPersistence.annotations.UID;
-import com.zextras.slcwPersistence.mapping.Field;
-import com.zextras.slcwPersistence.annotations.Entity;
+import com.zextras.slcwPersistence.converting.SlcwConverter;
+import com.zextras.slcwPersistence.mapping.SlcwEntry;
+import com.zextras.slcwPersistence.mapping.SlcwField;
 import com.zextras.slcwPersistence.mapping.SlcwMapper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,75 +30,56 @@ public class SlcwClient {
     }
   }
 
-  //todo better design
-  public <T extends SlcwBean> T getByUID(final String uid, final Class<T> clazz) {
-    var fields = clazz.getDeclaredFields();
-    var filter = Arrays.stream(fields).filter(field -> field.isAnnotationPresent(UID.class)).findFirst().map(field -> field.getAnnotation(UID.class).name() + "=" + uid);
-    String baseDn = "ou=" + clazz.getAnnotation(Entity.class).name() + ",dc=example,dc=com";
-    List<SearchResultEntry> searchResultEntries = search(baseDn, SearchScope.ONE, filter.get());
-    SearchResultEntry entry = searchResultEntries.get(0);
-    entry.getAttributes();
-    T bean;
+  public <T> T getById(final String id, final Class<T> clazz) {
+
+    T object;
     try {
-      bean = clazz.getDeclaredConstructor().newInstance();
-    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      object = clazz.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
-    return null;
+
+    SlcwEntry entry = new SlcwEntry();
+    SlcwMapper.map(entry, object);
+
+    String filter = entry.getId().getFieldName()
+            + "="
+            + id;
+
+    var searchResult = search(entry.getDn(), SearchScope.ONE, filter).get(0);
+    entry.setSearchResultEntry(searchResult);
+    SlcwConverter.convertFromSearchResult(entry, object);
+    return object;
   }
 
-  public LDAPResult add(final SlcwBean bean) {
-    Map<String, List<Field>> map = SlcwMapper.mapFields(bean);
-    Field uid = map.get("uid").get(0);
-    // todo
-    String dn =
-        uid.getFieldName()
-            + "="
-            + uid.getFiledValue()
-            + ",ou="
-            + bean.getClass().getAnnotation(Entity.class).name()
-            + ",dc=example,dc=com";
+  public <T> LDAPResult add(final T object) {
+    SlcwEntry entry = new SlcwEntry();
+    SlcwMapper.map(object, entry);
 
-    List<Attribute> attributes = SlcwMapper.toAttributeList(map.get("fields"));
+    List<Attribute> attributes = SlcwConverter.convertToAttributes(entry);
     try {
-      return connection.add(dn, attributes);
+      return connection.add(entry.getDn(), attributes);
     } catch (LDAPException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public LDAPResult update(final SlcwBean bean) {
-    Map<String, List<Field>> map = SlcwMapper.mapFields(bean);
-    Field uid = map.get("uid").get(0);
-    // todo
-    String dn =
-        uid.getFieldName()
-            + "="
-            + uid.getFiledValue()
-            + ",ou="
-            + bean.getClass().getAnnotation(Entity.class).name()
-            + ",dc=example,dc=com";
-    List<Modification> modifications = SlcwMapper.toModificationList(map.get("fields"));
+  public <T> LDAPResult update(final T object) {
+    SlcwEntry entry = new SlcwEntry();
+    SlcwMapper.map(object, entry);
+    List<Modification> modifications = SlcwConverter.convertToModifications(entry);
     try {
-      return connection.modify(dn, modifications);
+      return connection.modify(entry.getDn(), modifications);
     } catch (LDAPException e) {
       throw new RuntimeException(e);
     }
   }
 
-    public LDAPResult delete(final SlcwBean bean) {
-      Map<String, List<Field>> map = SlcwMapper.mapFields(bean);
-      Field uid = map.get("uid").get(0);
-      // todo
-      String dn =
-              uid.getFieldName()
-                      + "="
-                      + uid.getFiledValue()
-                      + ",ou="
-                      + bean.getClass().getAnnotation(Entity.class).name()
-                      + ",dc=example,dc=com";
+    public <T> LDAPResult delete(final T object) {
+      SlcwEntry entry = new SlcwEntry();
+      SlcwMapper.map(object, entry);
       try {
-        return connection.delete(dn);
+        return connection.delete(entry.getDn());
       } catch (LDAPException e) {
         throw new RuntimeException(e);
       }

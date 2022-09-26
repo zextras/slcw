@@ -9,4 +9,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ObjectClass {
     String name() default "objectClass";
+    boolean binary() default false;
 }
