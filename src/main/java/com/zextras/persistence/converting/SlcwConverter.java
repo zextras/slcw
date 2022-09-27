@@ -8,7 +8,17 @@ import com.zextras.persistence.mapping.SlcwEntry;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Helper class that performs converting operations.
+ */
 public class SlcwConverter {
+
+    /**
+     * Converts entry to a list of attributes which this entry has.*
+     *
+     * @param entry a representation of a record object of t
+     * @return
+     */
     public static List<Attribute> convertToAttributes(SlcwEntry entry) {
         return entry.getFields().entrySet().stream()
                 .map(field -> {

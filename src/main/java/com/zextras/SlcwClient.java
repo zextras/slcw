@@ -6,25 +6,43 @@ import com.zextras.handler.OperationResult;
 import com.zextras.persistence.converting.SlcwConverter;
 import com.zextras.persistence.mapping.SlcwEntry;
 import com.zextras.persistence.mapping.SlcwMapper;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-/** FIXME add actual documentation when it will be implemented */
+/**
+ * Main entrypoint for the library.
+ */
 public class SlcwClient {
   private LDAPConnection connection;
-  private String baseDn;
+  private final String baseDn;
 
+  /**
+   * Creates a client with an opened connection.*
+   *
+   * @param connection an opened connection to the server.
+   * @param baseDn the starting point on the server.
+   */
   public SlcwClient(LDAPConnection connection, String baseDn) {
     this.baseDn = baseDn;
     this.connection = connection;
   }
 
+  /**
+   * Creates a client, authenticate a user and change the identity of the client connection.*
+   *
+   * @param host a network layer host address.
+   * @param port a port on a host that connects it to the storage system.
+   * @param bindDN a Username used to connect to the server.
+   * @param password a secret word or phrase that allows access to the server.
+   * @param baseDn the starting point on the server.
+   */
   public SlcwClient(String host, int port, String bindDN, String password, String baseDn) {
     this.baseDn = baseDn;
     connect(host, port, bindDN, password);
   }
 
-  private void connect(final String host, final int port, final String bindDN, final String password) {
+  private void connect(String host, int port, String bindDN, String password) {
     try {
       connection = new LDAPConnection(host, port, bindDN, password);
     } catch (LDAPException e) {
@@ -32,7 +50,15 @@ public class SlcwClient {
     }
   }
 
-  public <T> T getById(final String id, final Class<T> clazz) {
+  /**
+   * Gets an object from a record stored in the structure, otherwise throws an exception.*
+   *
+   * @param id a unique identifier that marks that particular record as unique from every other record.
+   * @param clazz type of the class which represents an object that you wanted to get. (ex. User.class)
+   * @return an object of the given class.
+   * @param <T> is a conventional letter that stands for "Type".
+   */
+  public <T> T getById(String id, Class<T> clazz) {
     T object;
     try {
       object = clazz.getDeclaredConstructor().newInstance();
@@ -53,13 +79,19 @@ public class SlcwClient {
     if (searchResult.isEmpty()) {
       throw new SlcwException(String.format("Object %s not found.", id));
     }
-
     var searchResultEntry = searchResult.get(0);
     SlcwMapper.mapSearchResult(searchResultEntry, entry, object);
     return object;
   }
 
-  public <T> OperationResult add(final T object) {
+  /**
+   * Creates a new entry in the structure.*
+   *
+   * @param object an object that you want to save in the structure.
+   * @return a result of an adding operation. (ex. "0 (success)").
+   * @param <T> is a conventional letter that stands for "Type".
+   */
+  public <T> OperationResult add(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
     SlcwMapper.map(object, entry);
 
@@ -72,6 +104,13 @@ public class SlcwClient {
     }
   }
 
+  /**
+   * Alter the content of an entry in the structure.*
+   *
+   * @param object an object that you want to modify in the structure.
+   * @return a result of an adding operation. (ex. "0 (success)").
+   * @param <T> is a conventional letter that stands for "Type".
+   */
   public <T> OperationResult update(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
     SlcwMapper.map(object, entry);
@@ -84,7 +123,14 @@ public class SlcwClient {
     }
   }
 
-  public <T> OperationResult delete(T object) {
+  /**
+   * Remove an entry from the structure.*
+   *
+   * @param object an object that you want to remove.
+   * @return a result of an adding operation. (ex. "0 (success)").
+   * @param <T> is a conventional letter that stands for "Type".
+   */
+  public <T> OperationResult delete(T object) { //todo change for id
     SlcwEntry entry = new SlcwEntry(baseDn);
     SlcwMapper.map(object, entry);
     try {

@@ -5,7 +5,18 @@ import com.zextras.utils.ReflectionUtils;
 import com.zextras.persistence.annotations.*;
 import java.util.*;
 
+/**
+ * Helper class that performs mapping operations.
+ */
 public class SlcwMapper {
+
+  /**
+   * Maps an object to the representation entry in matter to perform CRUD operations.*
+   *
+   * @param object object of the Type - a source object that you want to map.
+   * @param entry a destination object of mapping.
+   * @param <T> is a conventional letter that stands for "Type".
+   */
   public static <T> void map(T object, SlcwEntry entry) {
     mapFields(object, entry);
 
@@ -24,6 +35,13 @@ public class SlcwMapper {
     entry.setDn(dn);
   }
 
+  /**
+   * Maps a representation entry in the structure to a Java object in order to perform get operation.*
+   *
+   * @param entry representation entry of an object.
+   * @param object object of the Type that you want to get.
+   * @param <T> is a conventional letter that stands for "Type".
+   */
   public static <T> void map(SlcwEntry entry, T object) {
     mapFields(object, entry);
 
@@ -38,7 +56,7 @@ public class SlcwMapper {
     entry.setDn(dn);
   }
 
-  public static <T> void mapFields(T object, SlcwEntry entry) {
+  private static <T> void mapFields(T object, SlcwEntry entry) {
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
       throw new RuntimeException("Class should be mark with @Entity annotation.");
     }
@@ -87,6 +105,7 @@ public class SlcwMapper {
             });
   }
 
+  // todo refactor
   public static <T> void mapSearchResult(SearchResultEntry searchResultEntry, SlcwEntry entry, T object) {
     searchResultEntry
         .getAttributes()

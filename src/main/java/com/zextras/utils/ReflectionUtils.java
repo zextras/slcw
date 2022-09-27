@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 public class ReflectionUtils {
     public static void setValue(Field field, Object object, String value) {
+        //todo start using transcoder
         field.setAccessible(true);
         var type = field.getType().getName();
         switch (type) {

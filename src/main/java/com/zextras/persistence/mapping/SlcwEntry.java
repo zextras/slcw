@@ -3,7 +3,9 @@ package com.zextras.persistence.mapping;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Class which represents a record in the given structure.
+ */
 public class SlcwEntry {
     private String baseDn;
     private String dn;
