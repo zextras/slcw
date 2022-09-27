@@ -1,4 +1,6 @@
-package com.zextras.transcode;
+package com.zextras.transcode.primitive;
+
+import com.zextras.transcode.TranscoderUtils;
 
 public abstract class AbstractStringValueTranscoder<T> implements ValueTranscoder<T> {
     public AbstractStringValueTranscoder() {

@@ -123,7 +123,7 @@ public class SlcwMapper {
                 if(field.isBinary()) {
                   ReflectionUtils.setBinaryValue(declaredField, object, attribute.getValueByteArray());
                 } else {
-                ReflectionUtils.setValue(declaredField, object, attribute.getValue());}
+                ReflectionUtils.setStringValue(declaredField, object, attribute.getValue());}
               }
             });
   }

@@ -1,4 +1,4 @@
-package com.zextras.transcode;
+package com.zextras.transcode.primitive;
 
 public class IntegerValueTranscoder extends AbstractPrimitiveValueTranscoder<Integer> {
     public IntegerValueTranscoder() {

@@ -1,4 +1,4 @@
-package com.zextras.transcode;
+package com.zextras.transcode.primitive;
 
 public class FloatValueTranscoder extends AbstractPrimitiveValueTranscoder<Float> {
     public FloatValueTranscoder() {

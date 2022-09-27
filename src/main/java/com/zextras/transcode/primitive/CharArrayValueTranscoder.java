@@ -1,4 +1,4 @@
-package com.zextras.transcode;
+package com.zextras.transcode.primitive;
 
 public class CharArrayValueTranscoder extends AbstractStringValueTranscoder<char[]> {
     public CharArrayValueTranscoder() {

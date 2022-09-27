@@ -51,7 +51,7 @@ public class SlcwClient {
   }
 
   /**
-   * Gets an object from a record stored in the structure, otherwise throws an exception.*
+   * Gets an object from an entry (record) stored in the structure, otherwise throws an exception.*
    *
    * @param id a unique identifier that marks that particular record as unique from every other record.
    * @param clazz type of the class which represents an object that you wanted to get. (ex. User.class)
