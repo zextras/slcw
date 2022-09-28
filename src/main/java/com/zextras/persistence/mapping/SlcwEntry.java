@@ -1,5 +1,6 @@
 package com.zextras.persistence.mapping;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ public class SlcwEntry {
     private String dn;
     private SlcwField id;
     private Map<String, SlcwField> fields = new HashMap<>();
+    private Collection<?> attributes;
 
     public SlcwEntry(String baseDn) {
         this.baseDn = baseDn;
@@ -46,5 +48,13 @@ public class SlcwEntry {
 
     public void setBaseDn(String baseDn) {
         this.baseDn = baseDn;
+    }
+
+    public Collection<?> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Collection<?> attributes) {
+        this.attributes = attributes;
     }
 }

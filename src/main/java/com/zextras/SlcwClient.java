@@ -1,14 +1,13 @@
 package com.zextras;
 
 import com.unboundid.ldap.sdk.*;
-import com.zextras.handler.SlcwException;
-import com.zextras.handler.OperationResult;
-import com.zextras.persistence.converting.SlcwConverter;
+import com.zextras.operations.ldap.LdapOperationExecutor;
+import com.zextras.operations.OperationResult;
+import com.zextras.persistence.converters.SlcwConverter;
 import com.zextras.persistence.mapping.SlcwEntry;
 import com.zextras.persistence.mapping.SlcwMapper;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import com.zextras.utils.DnBuilder;
+import com.zextras.utils.ObjectFactory;
 
 /**
  * Main entrypoint for the library.
@@ -16,6 +15,7 @@ import java.util.*;
 public class SlcwClient {
   private LDAPConnection connection;
   private final String baseDn;
+  private final SlcwMapper mapper;
 
   /**
    * Creates a client with an opened connection.*
@@ -26,6 +26,7 @@ public class SlcwClient {
   public SlcwClient(LDAPConnection connection, String baseDn) {
     this.baseDn = baseDn;
     this.connection = connection;
+    this.mapper = new SlcwMapper();
   }
 
   /**
@@ -39,10 +40,11 @@ public class SlcwClient {
    */
   public SlcwClient(String host, int port, String bindDN, String password, String baseDn) {
     this.baseDn = baseDn;
-    connect(host, port, bindDN, password);
+    initialize(host, port, bindDN, password);
+    this.mapper = new SlcwMapper();
   }
 
-  private void connect(String host, int port, String bindDN, String password) {
+  private void initialize(String host, int port, String bindDN, String password) {
     try {
       connection = new LDAPConnection(host, port, bindDN, password);
     } catch (LDAPException e) {
@@ -59,28 +61,18 @@ public class SlcwClient {
    * @param <T> is a conventional letter that stands for "Type".
    */
   public <T> T getById(String id, Class<T> clazz) {
-    T object;
-    try {
-      object = clazz.getDeclaredConstructor().newInstance();
-    } catch (InstantiationException
-        | IllegalAccessException
-        | NoSuchMethodException
-        | InvocationTargetException e) {
-      throw new RuntimeException(e);
-    }
-
+    T object = ObjectFactory.newObject(clazz);
     SlcwEntry entry = new SlcwEntry(baseDn);
-    SlcwMapper.map(entry, object);
 
-    String filter = entry.getId().getFieldName() + "=" + id;
+    mapper.map(object, entry);
 
-    var searchResult = search(entry.getDn(), SearchScope.ONE, filter);
+    DnBuilder.createDnForGet(entry, object);
+    entry.getId().setFiledValue(id);
 
-    if (searchResult.isEmpty()) {
-      throw new SlcwException(String.format("Object %s not found.", id));
-    }
-    var searchResultEntry = searchResult.get(0);
-    SlcwMapper.mapSearchResult(searchResultEntry, entry, object);
+    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    executor.executeGetOperation(entry);
+
+    mapper.map(entry, object);
     return object;
   }
 
@@ -93,15 +85,15 @@ public class SlcwClient {
    */
   public <T> OperationResult add(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
-    SlcwMapper.map(object, entry);
 
-    List<Attribute> attributes = SlcwConverter.convertToAttributes(entry);
-    try {
-      LDAPResult result =  connection.add(entry.getDn(), attributes);
-      return new OperationResult(result.getResultCode().getName(), result.getResultCode().intValue());
-    } catch (LDAPException e) {
-      throw new RuntimeException(e);
-    }
+    SlcwMapper mapper = new SlcwMapper();
+    mapper.map(object, entry);
+
+    DnBuilder.createDn(entry, object);
+    entry.setAttributes(SlcwConverter.convertFieldsToAttributes(entry));
+
+    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    return executor.executeAddOperation(entry);
   }
 
   /**
@@ -113,14 +105,15 @@ public class SlcwClient {
    */
   public <T> OperationResult update(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
-    SlcwMapper.map(object, entry);
-    List<Modification> modifications = SlcwConverter.convertToModifications(entry);
-    try {
-      LDAPResult result = connection.modify(entry.getDn(), modifications);
-      return new OperationResult(result.getResultCode().getName(), result.getResultCode().intValue());
-    } catch (LDAPException e) {
-      throw new RuntimeException(e);
-    }
+    SlcwMapper mapper = new SlcwMapper();
+
+    mapper.map(object, entry);
+    DnBuilder.createDn(entry, object);
+
+    entry.setAttributes(SlcwConverter.convertFieldsToModifications(entry));
+
+    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    return executor.executeUpdateOperation(entry);
   }
 
   /**
@@ -132,22 +125,12 @@ public class SlcwClient {
    */
   public <T> OperationResult delete(T object) { //todo change for id
     SlcwEntry entry = new SlcwEntry(baseDn);
-    SlcwMapper.map(object, entry);
-    try {
-      LDAPResult result = connection.delete(entry.getDn());
-      return new OperationResult(result.getResultCode().getName(), result.getResultCode().intValue());
-    } catch (LDAPException e) {
-      throw new RuntimeException(e);
-    }
-  }
+    SlcwMapper mapper = new SlcwMapper();
 
-  private List<SearchResultEntry> search(String baseDN, SearchScope searchScope, String filter) {
-    SearchResult searchResult;
-    try {
-      searchResult = connection.search(baseDN, searchScope, filter);
-    } catch (LDAPSearchException e) {
-      throw new RuntimeException(e);
-    }
-    return searchResult.getSearchEntries();
+    mapper.map(object, entry);
+    DnBuilder.createDn(entry, object);
+
+    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    return executor.executeDeleteOperation(entry);
   }
 }

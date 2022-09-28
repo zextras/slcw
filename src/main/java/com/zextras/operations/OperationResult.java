@@ -1,13 +1,11 @@
-package com.zextras.handler;
-
-import com.unboundid.util.NotNull;
+package com.zextras.operations;
 
 public class OperationResult {
     private String name;
     private int intValue;
     private String stringRepresentation;
 
-    public OperationResult(@NotNull String name, int intValue) {
+    public OperationResult(String name, int intValue) {
         this.name = name;
         this.intValue = intValue;
         this.stringRepresentation = intValue + " (" + name + ')';

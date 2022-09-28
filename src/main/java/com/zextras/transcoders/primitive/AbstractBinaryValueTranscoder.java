@@ -1,6 +1,6 @@
-package com.zextras.transcode.primitive;
+package com.zextras.transcoders.primitive;
 
-import com.zextras.transcode.TranscoderUtils;
+import com.zextras.utils.TranscoderUtils;
 
 public abstract class AbstractBinaryValueTranscoder<T> implements ValueTranscoder<T> {
     public AbstractBinaryValueTranscoder() {

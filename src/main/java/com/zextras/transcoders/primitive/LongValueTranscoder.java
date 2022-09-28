@@ -1,4 +1,4 @@
-package com.zextras.transcode.primitive;
+package com.zextras.transcoders.primitive;
 
 public class LongValueTranscoder extends AbstractPrimitiveValueTranscoder<Long> {
     public LongValueTranscoder() {

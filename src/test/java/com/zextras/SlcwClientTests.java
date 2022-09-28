@@ -3,8 +3,8 @@ package com.zextras;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.unboundid.ldap.sdk.*;
-import com.zextras.handler.SlcwException;
-import com.zextras.handler.OperationResult;
+import com.zextras.persistence.SlcwException;
+import com.zextras.operations.OperationResult;
 import com.zextras.slcwBeans.User;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class SlcwClientTests {
   }
 
   @Test
-  public void shouldReturnSuccessOnModifyOperation() throws LDAPException {
+  public void shouldReturnSuccessOnUpdateOperation() throws LDAPException {
     final SlcwClient client =
         new SlcwClient(embeddedLdapRule.unsharedLdapConnection(), "dc=example,dc=com");
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);

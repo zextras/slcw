@@ -1,13 +1,12 @@
 package com.zextras.persistence.mapping;
 
-import com.unboundid.ldap.sdk.SearchResultEntry;
-import com.zextras.utils.ReflectionUtils;
+import com.unboundid.ldap.sdk.Attribute;
+import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.annotations.*;
+import com.zextras.utils.ReflectionUtils;
 import java.util.*;
 
-/**
- * Helper class that performs mapping operations.
- */
+/** Helper class that performs mapping operations. */
 public class SlcwMapper {
 
   /**
@@ -17,48 +16,9 @@ public class SlcwMapper {
    * @param entry a destination object of mapping.
    * @param <T> is a conventional letter that stands for "Type".
    */
-  public static <T> void map(T object, SlcwEntry entry) {
-    mapFields(object, entry);
-
-    //todo builder or smth
-    String dn =
-        entry.getId().getFieldName()
-            + "="
-            + entry.getId().getFiledValue()
-            + ","
-            + object.getClass().getAnnotation(Table.class).property()
-            + "="
-            + object.getClass().getAnnotation(Table.class).name()
-            + ","
-            + entry.getBaseDn();
-
-    entry.setDn(dn);
-  }
-
-  /**
-   * Maps a representation entry in the structure to a Java object in order to perform get operation.*
-   *
-   * @param entry representation entry of an object.
-   * @param object object of the Type that you want to get.
-   * @param <T> is a conventional letter that stands for "Type".
-   */
-  public static <T> void map(SlcwEntry entry, T object) {
-    mapFields(object, entry);
-
-    //todo builder or smth
-    String dn =
-        object.getClass().getAnnotation(Table.class).property()
-            + "="
-            + object.getClass().getAnnotation(Table.class).name()
-            + ","
-            + entry.getBaseDn();
-
-    entry.setDn(dn);
-  }
-
-  private static <T> void mapFields(T object, SlcwEntry entry) {
+  public <T> void map(T object, SlcwEntry entry) {
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
-      throw new RuntimeException("Class should be mark with @Entity annotation.");
+      throw new SlcwException("Class should be mark with @Entity annotation.");
     }
 
     var mapEntry = entry.getFields();
@@ -105,13 +65,25 @@ public class SlcwMapper {
             });
   }
 
-  // todo refactor
-  public static <T> void mapSearchResult(SearchResultEntry searchResultEntry, SlcwEntry entry, T object) {
-    searchResultEntry
+  /**
+   * Maps a representation entry in the structure to a Java object in order to perform get
+   * operation.*
+   *
+   * @param entry representation entry of an object.
+   * @param object object of the Type that you want to get.
+   * @param <T> is a conventional letter that stands for "Type".
+   */
+  public <T> void map(SlcwEntry entry, T object) {
+    if (!object.getClass().isAnnotationPresent(Entity.class)) {
+      throw new SlcwException("Class should be mark with @Entity annotation.");
+    }
+
+    entry
         .getAttributes()
         .forEach(
             attribute -> {
-              var field = entry.getFields().get(attribute.getName());
+              Attribute attribute0 = (Attribute) attribute;
+              var field = entry.getFields().get(attribute0.getName());
               if (field != null) {
                 var fieldName = field.getFieldName();
                 java.lang.reflect.Field declaredField;
@@ -120,10 +92,12 @@ public class SlcwMapper {
                 } catch (NoSuchFieldException e) {
                   throw new RuntimeException(e);
                 }
-                if(field.isBinary()) {
-                  ReflectionUtils.setBinaryValue(declaredField, object, attribute.getValueByteArray());
+                if (field.isBinary()) {
+                  ReflectionUtils.setBinaryValue(
+                      declaredField, object, attribute0.getValueByteArray());
                 } else {
-                ReflectionUtils.setStringValue(declaredField, object, attribute.getValue());}
+                  ReflectionUtils.setStringValue(declaredField, object, attribute0.getValue());
+                }
               }
             });
   }

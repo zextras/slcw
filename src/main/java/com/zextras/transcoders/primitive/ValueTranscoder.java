@@ -1,4 +1,4 @@
-package com.zextras.transcode.primitive;
+package com.zextras.transcoders.primitive;
 
 public interface ValueTranscoder<T> {
     T decodeStringValue(String var1);

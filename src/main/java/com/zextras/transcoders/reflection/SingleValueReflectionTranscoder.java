@@ -1,6 +1,6 @@
-package com.zextras.transcode.reflection;
+package com.zextras.transcoders.reflection;
 
-import com.zextras.transcode.primitive.ValueTranscoder;
+import com.zextras.transcoders.primitive.ValueTranscoder;
 
 public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder {
     private final ValueTranscoder<T> valueTranscoder;

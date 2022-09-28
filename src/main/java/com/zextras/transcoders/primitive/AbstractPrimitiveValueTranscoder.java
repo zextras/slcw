@@ -1,4 +1,4 @@
-package com.zextras.transcode.primitive;
+package com.zextras.transcoders.primitive;
 
 public abstract class AbstractPrimitiveValueTranscoder<T> extends AbstractStringValueTranscoder<T> {
     private boolean primitive;

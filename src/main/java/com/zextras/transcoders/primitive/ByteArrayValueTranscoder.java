@@ -1,4 +1,4 @@
-package com.zextras.transcode.primitive;
+package com.zextras.transcoders.primitive;
 
 public class ByteArrayValueTranscoder extends AbstractBinaryValueTranscoder<byte[]> {
     public ByteArrayValueTranscoder() {

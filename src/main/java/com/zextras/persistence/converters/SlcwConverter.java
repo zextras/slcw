@@ -1,10 +1,9 @@
-package com.zextras.persistence.converting;
+package com.zextras.persistence.converters;
 
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
 import com.zextras.persistence.mapping.SlcwEntry;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,14 +11,13 @@ import java.util.stream.Collectors;
  * Helper class that performs converting operations.
  */
 public class SlcwConverter {
-
     /**
      * Converts entry to a list of attributes which this entry has.*
      *
-     * @param entry a representation of a record object of t
-     * @return
+     * @param entry a representation of a record in the structure
+     * @return list of attributes that can be stored
      */
-    public static List<Attribute> convertToAttributes(SlcwEntry entry) {
+    public static List<Attribute> convertFieldsToAttributes(SlcwEntry entry) {
         return entry.getFields().entrySet().stream()
                 .map(field -> {
                     var key = field.getKey();
@@ -32,8 +30,8 @@ public class SlcwConverter {
                     }
                 }).collect(Collectors.toList());
     }
-
-    public static List<Modification> convertToModifications(SlcwEntry entry) {
+    //todo converter interface with different implementations
+    public static List<Modification> convertFieldsToModifications(SlcwEntry entry) {
         return entry.getFields().entrySet().stream()
                 .map(field -> {
                     var key = field.getKey();
