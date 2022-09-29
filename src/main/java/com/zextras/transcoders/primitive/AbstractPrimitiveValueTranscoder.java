@@ -1,16 +1,17 @@
 package com.zextras.transcoders.primitive;
 
 public abstract class AbstractPrimitiveValueTranscoder<T> extends AbstractStringValueTranscoder<T> {
-    private boolean primitive;
 
-    public AbstractPrimitiveValueTranscoder() {
-    }
+  private boolean primitive;
 
-    public boolean isPrimitive() {
-        return this.primitive;
-    }
+  public AbstractPrimitiveValueTranscoder() {
+  }
 
-    public void setPrimitive(boolean b) {
-        this.primitive = b;
-    }
+  public boolean isPrimitive() {
+    return this.primitive;
+  }
+
+  public void setPrimitive(boolean b) {
+    this.primitive = b;
+  }
 }

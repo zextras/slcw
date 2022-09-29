@@ -4,16 +4,14 @@ package com.zextras.persistence.mapping;
  * Class which represents a field of an object.*
  */
 public class SlcwField {
+
   private String fieldName;
   private Object filedValue;
   private boolean binary;
 
-  private String stringValue;
-  private byte[] binaryValue;
-
   public SlcwField() {
-
   }
+
   public SlcwField(String fieldName, Object filedValue, boolean binary) {
     this.fieldName = fieldName;
     this.filedValue = filedValue;
@@ -45,23 +43,7 @@ public class SlcwField {
     this.filedValue = filedValue;
   }
 
-  public void setStringValue(String stringValue) {
-    this.stringValue = stringValue;
-  }
-
-  public void setBinaryValueValue(byte[] binaryValue) {
-    this.binaryValue = binaryValue;
-  }
-
   public void setBinary(boolean binary) {
     this.binary = binary;
-  }
-
-  public String getStringValue() {
-    return stringValue;
-  }
-
-  public byte[] getBinaryValue() {
-    return binaryValue;
   }
 }

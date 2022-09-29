@@ -1,18 +1,19 @@
 package com.zextras.transcoders.primitive;
 
 public class DoubleValueTranscoder extends AbstractPrimitiveValueTranscoder<Double> {
-    public DoubleValueTranscoder() {
-    }
 
-    public DoubleValueTranscoder(boolean b) {
-        this.setPrimitive(b);
-    }
+  public DoubleValueTranscoder() {
+  }
 
-    public Double decodeStringValue(String value) {
-        return Double.valueOf(value);
-    }
+  public DoubleValueTranscoder(boolean b) {
+    this.setPrimitive(b);
+  }
 
-    public Class<Double> getType() {
-        return this.isPrimitive() ? Double.TYPE : Double.class;
-    }
+  public Double decodeStringValue(String value) {
+    return Double.valueOf(value);
+  }
+
+  public Class<Double> getType() {
+    return this.isPrimitive() ? Double.TYPE : Double.class;
+  }
 }

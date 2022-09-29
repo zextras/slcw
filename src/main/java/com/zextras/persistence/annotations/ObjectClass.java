@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ObjectClass {
-    String name() default "objectClass";
-    boolean binary() default false;
+
+  String name() default "objectClass";
+
+  boolean binary() default false;
 }

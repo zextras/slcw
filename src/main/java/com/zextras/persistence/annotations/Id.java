@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Id {
-    String name() default "";
-    boolean binary() default false;
+
+  String name() default "";
+
+  boolean binary() default false;
 }

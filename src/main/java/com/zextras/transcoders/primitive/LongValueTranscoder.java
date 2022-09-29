@@ -1,18 +1,19 @@
 package com.zextras.transcoders.primitive;
 
 public class LongValueTranscoder extends AbstractPrimitiveValueTranscoder<Long> {
-    public LongValueTranscoder() {
-    }
 
-    public LongValueTranscoder(boolean b) {
-        this.setPrimitive(b);
-    }
+  public LongValueTranscoder() {
+  }
 
-    public Long decodeStringValue(String value) {
-        return Long.valueOf(value);
-    }
+  public LongValueTranscoder(boolean b) {
+    this.setPrimitive(b);
+  }
 
-    public Class<Long> getType() {
-        return this.isPrimitive() ? Long.TYPE : Long.class;
-    }
+  public Long decodeStringValue(String value) {
+    return Long.valueOf(value);
+  }
+
+  public Class<Long> getType() {
+    return this.isPrimitive() ? Long.TYPE : Long.class;
+  }
 }

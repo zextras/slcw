@@ -1,18 +1,19 @@
 package com.zextras.transcoders.primitive;
 
 public class IntegerValueTranscoder extends AbstractPrimitiveValueTranscoder<Integer> {
-    public IntegerValueTranscoder() {
-    }
 
-    public IntegerValueTranscoder(boolean b) {
-        this.setPrimitive(b);
-    }
+  public IntegerValueTranscoder() {
+  }
 
-    public Integer decodeStringValue(String value) {
-        return Integer.valueOf(value);
-    }
+  public IntegerValueTranscoder(boolean b) {
+    this.setPrimitive(b);
+  }
 
-    public Class<Integer> getType() {
-        return this.isPrimitive() ? Integer.TYPE : Integer.class;
-    }
+  public Integer decodeStringValue(String value) {
+    return Integer.valueOf(value);
+  }
+
+  public Class<Integer> getType() {
+    return this.isPrimitive() ? Integer.TYPE : Integer.class;
+  }
 }

@@ -1,9 +1,10 @@
 package com.zextras.transcoders.primitive;
 
 public interface ValueTranscoder<T> {
-    T decodeStringValue(String var1);
 
-    T decodeBinaryValue(byte[] var1);
+  T decodeStringValue(String var1);
 
-    Class<T> getType();
+  T decodeBinaryValue(byte[] var1);
+
+  Class<T> getType();
 }

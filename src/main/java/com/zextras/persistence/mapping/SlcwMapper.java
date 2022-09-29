@@ -6,15 +6,17 @@ import com.zextras.persistence.annotations.*;
 import com.zextras.utils.ReflectionUtils;
 import java.util.*;
 
-/** Helper class that performs mapping operations. */
+/**
+ * Helper class that performs mapping operations.
+ */
 public class SlcwMapper {
 
   /**
    * Maps an object to the representation entry in matter to perform CRUD operations.*
    *
    * @param object object of the Type - a source object that you want to map.
-   * @param entry a destination object of mapping.
-   * @param <T> is a conventional letter that stands for "Type".
+   * @param entry  a destination object of mapping.
+   * @param <T>    is a conventional letter that stands for "Type".
    */
   public <T> void map(T object, SlcwEntry entry) {
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
@@ -69,9 +71,9 @@ public class SlcwMapper {
    * Maps a representation entry in the structure to a Java object in order to perform get
    * operation.*
    *
-   * @param entry representation entry of an object.
+   * @param entry  representation entry of an object.
    * @param object object of the Type that you want to get.
-   * @param <T> is a conventional letter that stands for "Type".
+   * @param <T>    is a conventional letter that stands for "Type".
    */
   public <T> void map(SlcwEntry entry, T object) {
     if (!object.getClass().isAnnotationPresent(Entity.class)) {

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class LdapOperationExecutor extends AbstractOperationExecutor {
-    private LDAPConnection connection;
+    private final LDAPConnection connection;
     public LdapOperationExecutor(LDAPConnection connection) {
         this.connection = connection;
     }
@@ -18,7 +18,7 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
     public OperationResult executeAddOperation(SlcwEntry entry) {
         Collection<Attribute> attributes = (Collection<Attribute>) entry.getAttributes();
         try {
-            LDAPResult result =  connection.add(entry.getDn(), attributes);
+            LDAPResult result =  connection.add(entry.getFilter() + "," + entry.getDn(), attributes);
             return new OperationResult(result.getResultCode().getName(), result.getResultCode().intValue());
         } catch (LDAPException e) {
             throw new RuntimeException(e);
@@ -45,9 +45,7 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
     }
 
     public OperationResult executeGetOperation(SlcwEntry entry) {
-        String filter = entry.getId().getFieldName() + "=" + entry.getId().getFiledValue();
-
-        var result = search(entry.getDn(), SearchScope.ONE, filter);
+        var result = search(entry.getDn(), entry.getSearchScope(), entry.getFilter());
         var searchResultEntries = result.getSearchEntries();
         if (searchResultEntries.isEmpty()) {
             throw new SlcwException(String.format("Object %s not found.", entry.getId().getFiledValue()));

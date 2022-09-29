@@ -4,6 +4,7 @@ import com.zextras.transcoders.primitive.*;
 import java.util.*;
 
 public class DefaultReflectionTranscoder implements ReflectionTranscoder {
+
   private SingleValueReflectionTranscoder<?> valueTranscoder;
   private Set<SingleValueReflectionTranscoder<?>> singleValueTranscoders;
 

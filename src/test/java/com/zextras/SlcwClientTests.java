@@ -13,6 +13,7 @@ import org.zapodot.junit.ldap.EmbeddedLdapRule;
 import org.zapodot.junit.ldap.EmbeddedLdapRuleBuilder;
 
 public class SlcwClientTests {
+
   @Rule
   public EmbeddedLdapRule embeddedLdapRule =
       EmbeddedLdapRuleBuilder.newInstance()

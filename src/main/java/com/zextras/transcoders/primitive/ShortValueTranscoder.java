@@ -1,18 +1,19 @@
 package com.zextras.transcoders.primitive;
 
 public class ShortValueTranscoder extends AbstractPrimitiveValueTranscoder<Short> {
-    public ShortValueTranscoder() {
-    }
 
-    public ShortValueTranscoder(boolean b) {
-        this.setPrimitive(b);
-    }
+  public ShortValueTranscoder() {
+  }
 
-    public Short decodeStringValue(String value) {
-        return Short.valueOf(value);
-    }
+  public ShortValueTranscoder(boolean b) {
+    this.setPrimitive(b);
+  }
 
-    public Class<Short> getType() {
-        return this.isPrimitive() ? Short.TYPE : Short.class;
-    }
+  public Short decodeStringValue(String value) {
+    return Short.valueOf(value);
+  }
+
+  public Class<Short> getType() {
+    return this.isPrimitive() ? Short.TYPE : Short.class;
+  }
 }
