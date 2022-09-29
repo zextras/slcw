@@ -4,8 +4,18 @@ import com.zextras.transcoders.reflection.DefaultReflectionTranscoder;
 
 import java.lang.reflect.Field;
 
+/**
+ * Helper util class that performs reflecting operations.
+ */
 public class ReflectionUtils {
 
+  /**
+   * Sets a given field with a given value using reflection.
+   *
+   * @param field  a field of an object that you want to modify.
+   * @param object an instance of a class that you want to modify.
+   * @param value  a value that you want to have after set operation.
+   */
   public static void setField(Field field, Object object, Object value) {
     field.setAccessible(true);
     try {
@@ -15,12 +25,27 @@ public class ReflectionUtils {
     }
   }
 
+  /**
+   * Sets a given field with a given string value using reflection. Uses transcoders package classes
+   * in order to be able to parse values of different types from a given string.
+   *
+   * @param field  a field of an object that you want to modify.
+   * @param object an instance of a class that you want to modify.
+   * @param value  a string representation of the value that you want to have after set operation.
+   */
   public static void setStringValue(Field field, Object object, String value) {
     var type = field.getType();
     var transcoder = new DefaultReflectionTranscoder(type).getValueTranscoder();
     setField(field, object, transcoder.decodeStringValue(value));
   }
 
+  /**
+   * Sets a given field with a given byte array value using reflection.
+   *
+   * @param field  a field of an object that you want to modify.
+   * @param object an instance of a class that you want to modify.
+   * @param value  a byte array value that you want to have after set operation.
+   */
   public static void setBinaryValue(Field field, Object object, byte[] value) {
     setField(field, object, value);
   }

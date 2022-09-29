@@ -14,6 +14,7 @@ import com.zextras.utils.ObjectFactory;
  */
 public class SlcwClient {
 
+  //todo connection factory
   private LDAPConnection connection;
   private final String baseDn;
   private final SlcwMapper mapper = new SlcwMapper();
@@ -53,7 +54,7 @@ public class SlcwClient {
   }
 
   /**
-   * Gets an object from an entry (record) stored in the structure, otherwise throws an exception.*
+   * Gets an object from a record stored in the structure, otherwise throws an exception.*
    *
    * @param id    a unique identifier that marks that particular record as unique from every other
    *              record.
@@ -68,6 +69,7 @@ public class SlcwClient {
 
     mapper.map(object, entry);
 
+    entry.getId().setFiledValue(id);
     entry.setDn(builder.buildDn(entry, object));
     entry.setFilter(builder.buildFilter(entry));
     entry.setSearchScope(SearchScope.ONE);
@@ -80,7 +82,7 @@ public class SlcwClient {
   }
 
   /**
-   * Creates a new entry in the structure.*
+   * Creates a new entry (record) in the structure.*
    *
    * @param object an object that you want to save in the structure.
    * @param <T>    is a conventional letter that stands for "Type".
@@ -88,10 +90,11 @@ public class SlcwClient {
    */
   public <T> OperationResult add(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
+
     mapper.map(object, entry);
+
     entry.setFilter(builder.buildFilter(entry));
     entry.setDn(builder.buildDn(entry, object));
-
     entry.setAttributes(SlcwConverter.convertFieldsToAttributes(entry));
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
@@ -99,7 +102,7 @@ public class SlcwClient {
   }
 
   /**
-   * Alter the content of an entry in the structure.*
+   * Alter the content of an entry (record) in the structure.*
    *
    * @param object an object that you want to modify in the structure.
    * @param <T>    is a conventional letter that stands for "Type".
@@ -109,8 +112,9 @@ public class SlcwClient {
     SlcwEntry entry = new SlcwEntry(baseDn);
 
     mapper.map(object, entry);
-    builder.buildFilter(entry);
 
+    entry.setFilter(builder.buildFilter(entry));
+    entry.setDn(builder.buildDn(entry, object));
     entry.setAttributes(SlcwConverter.convertFieldsToModifications(entry));
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
@@ -118,17 +122,24 @@ public class SlcwClient {
   }
 
   /**
-   * Remove an entry from the structure.*
+   * Remove an entry (record) from the structure.*
    *
-   * @param object an object that you want to remove.
-   * @param <T>    is a conventional letter that stands for "Type".
+   * @param id    a unique identifier that marks that particular record as unique from every other
+   *              record.
+   * @param clazz type of the class which represents an object that you wanted to get. (ex.
+   *              User.class)
+   * @param <T>   is a conventional letter that stands for "Type".
    * @return a result of an adding operation. (ex. "0 (success)").
    */
-  public <T> OperationResult delete(T object) { //todo change for id
+  public <T> OperationResult delete(String id, Class<T> clazz) {
     SlcwEntry entry = new SlcwEntry(baseDn);
+    T object = ObjectFactory.newObject(clazz);
 
     mapper.map(object, entry);
-    builder.buildFilter(entry);
+
+    entry.getId().setFiledValue(id);
+    entry.setFilter(builder.buildFilter(entry));
+    entry.setDn(builder.buildDn(entry, object));
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
     return executor.executeDeleteOperation(entry);

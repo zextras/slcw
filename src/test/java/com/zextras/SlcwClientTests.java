@@ -50,7 +50,7 @@ public class SlcwClientTests {
     final User presentUser = client.getById(user.getUid(), User.class);
     assertEquals(user, presentUser);
 
-    final OperationResult result = client.delete(user);
+    final OperationResult result = client.delete(user.getUid(), User.class);
     assertEquals("0 (success)", result.getStringRepresentation());
 
     Assertions.assertThrows(SlcwException.class, () -> client.getById(user.getUid(), User.class));

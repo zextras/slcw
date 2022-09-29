@@ -3,11 +3,20 @@ package com.zextras.transcoders.reflection;
 import com.zextras.transcoders.primitive.*;
 import java.util.*;
 
+/**
+ * Helper class that contains primitive and primitive wrapper transcoders which are used by
+ * ReflectionUtils class in order to set values.
+ */
 public class DefaultReflectionTranscoder implements ReflectionTranscoder {
 
-  private SingleValueReflectionTranscoder<?> valueTranscoder;
-  private Set<SingleValueReflectionTranscoder<?>> singleValueTranscoders;
+  private final SingleValueReflectionTranscoder<?> valueTranscoder;
+  private final Set<SingleValueReflectionTranscoder<?>> singleValueTranscoders;
 
+  /**
+   * Creates DefaultReflectionTranscoder corresponding to a given type.
+   *
+   * @param type a class for which you want to get a transcoder.
+   */
   public DefaultReflectionTranscoder(Class<?> type) {
     this.singleValueTranscoders = this.getDefaultSingleValueTranscoders();
     this.valueTranscoder = getSingleValueReflectionTranscoder(type);
@@ -55,6 +64,12 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder {
     return transcoders;
   }
 
+  /**
+   * Decodes string value to the needed object by using a corresponding transcoder.
+   *
+   * @param var string that you want to get a value from.
+   * @return corresponding object of transcoding operation.
+   */
   @Override
   public Object decodeStringValue(String var) {
     return this.valueTranscoder.decodeStringValue(var);

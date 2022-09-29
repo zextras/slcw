@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 public class SlcwConverter {
 
   /**
-   * Converts entry to a list of attributes which this entry has.*
+   * Converts an entry to a list of attributes which this entry has.*
    *
-   * @param entry a representation of a record in the structure
-   * @return list of attributes that can be stored
+   * @param entry a representation of a record in the structure.
+   * @return list of attributes that can be stored.
    */
   public static List<Attribute> convertFieldsToAttributes(SlcwEntry entry) {
     return entry.getFields().entrySet().stream()
@@ -33,6 +33,13 @@ public class SlcwConverter {
   }
 
   //todo converter interface with different implementations
+
+  /**
+   * Converts an entry to a list of modifications which you want to apply.*
+   *
+   * @param entry a representation of a record in the structure.
+   * @return list of modifications that can be stored.
+   */
   public static List<Modification> convertFieldsToModifications(SlcwEntry entry) {
     return entry.getFields().entrySet().stream()
         .map(field -> {

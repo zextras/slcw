@@ -1,11 +1,18 @@
 package com.zextras.operations;
 
+/**
+ * Class that provides information about the result of operations you perform.
+ */
 public class OperationResult {
 
-  private String name;
-  private int intValue;
-  private String stringRepresentation;
+  private final String name;
+  private final int intValue;
+  private final String stringRepresentation;
 
+  /**
+   * @param name     plain message of an operation which is clear to you.
+   * @param intValue plain operation code which is clear to you.
+   */
   public OperationResult(String name, int intValue) {
     this.name = name;
     this.intValue = intValue;
