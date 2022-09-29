@@ -52,6 +52,5 @@ public class SlcwConverter {
             return new Modification(ModificationType.REPLACE, key, String.valueOf(value));
           }
         }).collect(Collectors.toList());
-
   }
 }
