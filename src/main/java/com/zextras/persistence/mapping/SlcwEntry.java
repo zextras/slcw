@@ -19,6 +19,9 @@ public class SlcwEntry {
   private Map<String, SlcwField> fields = new HashMap<>();
   private Collection<?> attributes;
 
+  public SlcwEntry() {
+  }
+
   public SlcwEntry(String baseDn) {
     this.baseDn = baseDn;
   }

@@ -2,17 +2,25 @@ package com.zextras.persistence.mapping;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.converters.SlcwConverter;
+import com.zextras.slcwBeans.Ticket;
 import com.zextras.slcwBeans.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SlcwMapperTests {
 
+  private SlcwMapper mapper;
+  @BeforeEach
+  void setUp() {
+    this.mapper = new SlcwMapper();
+  }
+
   @Test
   void shouldMapFromObject() {
-    SlcwMapper mapper = new SlcwMapper();
-    User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
-    SlcwEntry expectedEntry = new SlcwEntry("dc=example,dc=com");
+    final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
+    final SlcwEntry expectedEntry = new SlcwEntry("dc=example,dc=com");
     mapper.map(user, expectedEntry);
     assertEquals(user.getObjectClass(),
         expectedEntry.getFields().get("objectClass").getFiledValue());
@@ -25,13 +33,19 @@ class SlcwMapperTests {
 
   @Test
   void shouldMapFromEntry() {
-    SlcwMapper mapper = new SlcwMapper();
-    User expectedUser = new User("inetOrgPerson", "Name", "Surname", 6785949);
-    SlcwEntry entry = new SlcwEntry("dc=example,dc=com");
+    final User expectedUser = new User("inetOrgPerson", "Name", "Surname", 6785949);
+    final SlcwEntry entry = new SlcwEntry("dc=example,dc=com");
     mapper.map(expectedUser, entry);
     entry.setAttributes(SlcwConverter.convertFieldsToAttributes(entry));
-    User actualUser = new User();
+    final User actualUser = new User();
     mapper.map(entry, actualUser);
     assertEquals(expectedUser, actualUser);
+  }
+
+  @Test
+  void shouldThrowExceptionForNotEntityClass() {
+    final Ticket ticket = new Ticket();
+    final SlcwEntry entry = new SlcwEntry();
+    assertThrows(SlcwException.class, () -> mapper.map(ticket, entry));
   }
 }

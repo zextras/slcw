@@ -6,12 +6,12 @@ dc: example
 dn: ou=users,dc=example,dc=com
 objectClass: organizationalUnit
 objectClass: top
-ou: Users
+ou: users
 
 dn: ou=Groups,dc=example,dc=com
 objectClass: organizationalUnit
 objectClass: top
-ou: Groups
+ou: groups
 
 dn: cn=Micha Kops,ou=users,dc=example,dc=com
 objectClass: inetOrgPerson
