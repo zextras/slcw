@@ -21,7 +21,7 @@ public class SlcwClient {
   private final PropertyBuilder builder = new PropertyBuilder();
 
   /**
-   * Creates a client with an opened connection.*
+   * Creates a client with an opened connection.
    *
    * @param connection an opened connection to the server.
    * @param baseDn     the starting point on the server.
@@ -32,7 +32,7 @@ public class SlcwClient {
   }
 
   /**
-   * Creates a client, authenticate a user and change the identity of the client connection.*
+   * Creates a client, authenticate a user and change the identity of the client connection.
    *
    * @param host     a network layer host address.
    * @param port     a port on a host that connects it to the storage system.
@@ -54,7 +54,7 @@ public class SlcwClient {
   }
 
   /**
-   * Gets an object from a record stored in the structure, otherwise throws an exception.*
+   * Gets an object from a record stored in the structure, otherwise throws an exception.
    *
    * @param id    a unique identifier that marks that particular record as unique from every other
    *              record.
@@ -102,7 +102,7 @@ public class SlcwClient {
   }
 
   /**
-   * Alter the content of an entry (record) in the structure.*
+   * Alter the content of an entry (record) in the structure.
    *
    * @param object an object that you want to modify in the structure.
    * @param <T>    is a conventional letter that stands for "Type".
@@ -122,7 +122,7 @@ public class SlcwClient {
   }
 
   /**
-   * Remove an entry (record) from the structure.*
+   * Remove an entry (record) from the structure.
    *
    * @param id    a unique identifier that marks that particular record as unique from every other
    *              record.

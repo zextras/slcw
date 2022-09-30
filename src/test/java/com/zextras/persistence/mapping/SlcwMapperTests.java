@@ -14,7 +14,8 @@ class SlcwMapperTests {
     User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
     SlcwEntry expectedEntry = new SlcwEntry("dc=example,dc=com");
     mapper.map(user, expectedEntry);
-    assertEquals(user.getObjectClass(), expectedEntry.getFields().get("objectClass").getFiledValue());
+    assertEquals(user.getObjectClass(),
+        expectedEntry.getFields().get("objectClass").getFiledValue());
     assertEquals(user.getPhoneNumber(), expectedEntry.getFields().get("homePhone").getFiledValue());
     assertEquals(user.getSurname(), expectedEntry.getFields().get("sn").getFiledValue());
     assertEquals(user.getName(), expectedEntry.getFields().get("givenName").getFiledValue());
