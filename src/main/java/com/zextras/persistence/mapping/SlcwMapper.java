@@ -3,6 +3,7 @@ package com.zextras.persistence.mapping;
 import com.unboundid.ldap.sdk.Attribute;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.annotations.*;
+import com.zextras.utils.PropertyBuilder;
 import com.zextras.utils.ReflectionUtils;
 import java.util.*;
 
@@ -10,6 +11,8 @@ import java.util.*;
  * Helper class that performs mapping operations.
  */
 public class SlcwMapper {
+
+  private final PropertyBuilder builder = new PropertyBuilder();
 
   /**
    * Maps an object to the representation entry in matter to perform CRUD operations.*
@@ -22,6 +25,14 @@ public class SlcwMapper {
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
       throw new SlcwException("Class should be mark with @Entity annotation.");
     }
+
+    if (!object.getClass().isAnnotationPresent(Table.class)) {
+      throw new SlcwException("Class should be mark with @Table annotation.");
+    }
+
+    entry.setTable(new SlcwProperty(
+        object.getClass().getAnnotation(Table.class).property(),
+        object.getClass().getAnnotation(Table.class).name()));
 
     var mapEntry = entry.getFields();
 
@@ -39,8 +50,12 @@ public class SlcwMapper {
                 } catch (IllegalAccessException e) {
                   throw new SlcwException(e.getMessage());
                 }
-                entry.setId(new SlcwField(key, value));
-                mapEntry.put(key, new SlcwField(field.getName(), value));
+                SlcwProperty id = entry.getId();
+                id.setPropertyName(field.getName());
+                if (id.getPropertyValue() == null) {
+                  id.setPropertyValue(value);
+                }
+                mapEntry.put(key, id);
               } else if (field.isAnnotationPresent(ObjectClass.class)) {
                 var annotationProperty = field.getAnnotation(ObjectClass.class);
                 var key = annotationProperty.name();
@@ -50,7 +65,7 @@ public class SlcwMapper {
                 } catch (IllegalAccessException e) {
                   throw new SlcwException(e.getMessage());
                 }
-                mapEntry.put(key, new SlcwField(key, value));
+                mapEntry.put(key, new SlcwProperty(key, value));
               } else if (field.isAnnotationPresent(
                   com.zextras.persistence.annotations.Column.class)) {
                 var annotationProperty = field.getAnnotation(Column.class);
@@ -62,9 +77,12 @@ public class SlcwMapper {
                 } catch (IllegalAccessException e) {
                   throw new SlcwException(e.getMessage());
                 }
-                mapEntry.put(key, new SlcwField(field.getName(), value, binary));
+                mapEntry.put(key, new SlcwProperty(field.getName(), value, binary));
               }
             });
+
+    entry.setDn(builder.buildDn(entry));
+    entry.setFilter(builder.buildFilter(entry));
   }
 
   /**
@@ -87,7 +105,7 @@ public class SlcwMapper {
               Attribute attribute0 = (Attribute) attribute;
               var field = entry.getFields().get(attribute0.getName());
               if (field != null) {
-                var fieldName = field.getFieldName();
+                var fieldName = field.getPropertyName();
                 java.lang.reflect.Field declaredField;
                 try {
                   declaredField = object.getClass().getDeclaredField(fieldName);

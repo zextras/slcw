@@ -22,7 +22,7 @@ public class SlcwConverter {
     return entry.getFields().entrySet().stream()
         .map(field -> {
           var key = field.getKey();
-          var value = field.getValue().getFiledValue();
+          var value = field.getValue().getPropertyValue();
 
           if (field.getValue().isBinary()) {
             return new Attribute(key, (byte[]) value);
@@ -44,7 +44,7 @@ public class SlcwConverter {
     return entry.getFields().entrySet().stream()
         .map(field -> {
           var key = field.getKey();
-          var value = field.getValue().getFiledValue();
+          var value = field.getValue().getPropertyValue();
 
           if (field.getValue().isBinary()) {
             return new Modification(ModificationType.REPLACE, key, (byte[]) value);

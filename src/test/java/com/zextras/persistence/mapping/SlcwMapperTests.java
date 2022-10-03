@@ -23,12 +23,12 @@ class SlcwMapperTests {
     final SlcwEntry expectedEntry = new SlcwEntry("dc=example,dc=com");
     mapper.map(user, expectedEntry);
     assertEquals(user.getObjectClass(),
-        expectedEntry.getFields().get("objectClass").getFiledValue());
-    assertEquals(user.getPhoneNumber(), expectedEntry.getFields().get("homePhone").getFiledValue());
-    assertEquals(user.getSurname(), expectedEntry.getFields().get("sn").getFiledValue());
-    assertEquals(user.getName(), expectedEntry.getFields().get("givenName").getFiledValue());
+        expectedEntry.getFields().get("objectClass").getPropertyValue());
+    assertEquals(user.getPhoneNumber(), expectedEntry.getFields().get("homePhone").getPropertyValue());
+    assertEquals(user.getSurname(), expectedEntry.getFields().get("sn").getPropertyValue());
+    assertEquals(user.getName(), expectedEntry.getFields().get("givenName").getPropertyValue());
     assertEquals("dc=example,dc=com", expectedEntry.getBaseDn());
-    assertEquals(user.getId(), expectedEntry.getId().getFiledValue());
+    assertEquals(user.getId(), expectedEntry.getId().getPropertyValue());
   }
 
   @Test

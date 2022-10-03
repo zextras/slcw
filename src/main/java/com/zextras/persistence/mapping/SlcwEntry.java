@@ -10,10 +10,11 @@ import java.util.Map;
 public class SlcwEntry {
 
   private String baseDn;
-  private SlcwField id;
   private String dn;
   private String filter;
-  private Map<String, SlcwField> fields = new HashMap<>();
+  private SlcwProperty table;
+  private SlcwProperty id = new SlcwProperty();
+  private Map<String, SlcwProperty> fields = new HashMap<>();
   private Collection<?> attributes;
 
   public SlcwEntry() {
@@ -23,11 +24,11 @@ public class SlcwEntry {
     this.baseDn = baseDn;
   }
 
-  public void setId(SlcwField id) {
+  public void setId(SlcwProperty id) {
     this.id = id;
   }
 
-  public void setFields(Map<String, SlcwField> fields) {
+  public void setFields(Map<String, SlcwProperty> fields) {
     this.fields = fields;
   }
 
@@ -47,11 +48,15 @@ public class SlcwEntry {
     this.filter = filter;
   }
 
-  public SlcwField getId() {
+  public void setTable(SlcwProperty table) {
+    this.table = table;
+  }
+
+  public SlcwProperty getId() {
     return id;
   }
 
-  public Map<String, SlcwField> getFields() {
+  public Map<String, SlcwProperty> getFields() {
     return fields;
   }
 
@@ -69,5 +74,9 @@ public class SlcwEntry {
 
   public String getFilter() {
     return filter;
+  }
+
+  public SlcwProperty getTable() {
+    return table;
   }
 }

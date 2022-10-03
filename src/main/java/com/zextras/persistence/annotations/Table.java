@@ -16,5 +16,5 @@ public @interface Table {
 
   String name();
 
-  String property() default "";
+  String property();
 }

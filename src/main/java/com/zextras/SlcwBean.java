@@ -1,11 +1,9 @@
 package com.zextras;
 
+//todo fix when implemented
 /**
- * The SlcwBean class represents an object that can be used by {@linkplain SlcwClient} in order to
+ * The SlcwBean class represents an object that would be used by {@linkplain SlcwClient} in order to
  * provide CRUD operations on it.
- * //todo change when implemented
- * An SlcwBean object contains information about the model as well as
- * general purpose control methods.
  */
 public abstract class SlcwBean {
 

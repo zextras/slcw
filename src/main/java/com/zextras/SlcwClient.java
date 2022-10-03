@@ -7,7 +7,6 @@ import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.converters.SlcwConverter;
 import com.zextras.persistence.mapping.SlcwEntry;
 import com.zextras.persistence.mapping.SlcwMapper;
-import com.zextras.utils.PropertyBuilder;
 import com.zextras.utils.ObjectFactory;
 
 /**
@@ -22,7 +21,6 @@ public class SlcwClient {
   private LDAPConnection connection;
   private String baseDn;
   private final SlcwMapper mapper = new SlcwMapper();
-  private final PropertyBuilder builder = new PropertyBuilder();
 
   /**
    * Creates a client that should be initialized with
@@ -74,12 +72,8 @@ public class SlcwClient {
   public <T> T getById(String id, Class<T> clazz) {
     T object = ObjectFactory.newObject(clazz);
     SlcwEntry entry = new SlcwEntry(baseDn);
-
+    entry.getId().setPropertyValue(id);
     mapper.map(object, entry);
-
-    entry.getId().setFiledValue(id);
-    entry.setDn(builder.buildDn(entry, object));
-    entry.setFilter(builder.buildFilter(entry));
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
     executor.executeGetOperation(entry);
@@ -97,11 +91,7 @@ public class SlcwClient {
    */
   public <T> OperationResult add(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
-
     mapper.map(object, entry);
-
-    entry.setFilter(builder.buildFilter(entry));
-    entry.setDn(builder.buildDn(entry, object));
     entry.setAttributes(SlcwConverter.convertFieldsToAttributes(entry));
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
@@ -117,11 +107,7 @@ public class SlcwClient {
    */
   public <T> OperationResult update(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
-
     mapper.map(object, entry);
-
-    entry.setFilter(builder.buildFilter(entry));
-    entry.setDn(builder.buildDn(entry, object));
     entry.setAttributes(SlcwConverter.convertFieldsToModifications(entry));
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
@@ -137,11 +123,7 @@ public class SlcwClient {
    */
   public <T> OperationResult delete(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
-
     mapper.map(object, entry);
-
-    entry.setFilter(builder.buildFilter(entry));
-    entry.setDn(builder.buildDn(entry, object));
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
     return executor.executeDeleteOperation(entry);

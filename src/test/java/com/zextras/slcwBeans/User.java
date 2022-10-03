@@ -1,7 +1,6 @@
 package com.zextras.slcwBeans;
 
 import com.zextras.SlcwBean;
-import com.zextras.SlcwClient;
 import com.zextras.persistence.annotations.*;
 
 import java.util.Objects;

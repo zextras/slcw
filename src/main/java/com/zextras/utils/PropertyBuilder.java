@@ -1,6 +1,5 @@
 package com.zextras.utils;
 
-import com.zextras.persistence.annotations.Table;
 import com.zextras.persistence.mapping.SlcwEntry;
 
 /**
@@ -15,19 +14,17 @@ public class PropertyBuilder {
    * LDAP object by its distinguished name. A DN is a sequence of relative distinguished names (RDN)
    * connected by commas.
    *
-   * @param entry  an object that represents a record in LDAP.
-   * @param object a source object marked with @Table annotation.
-   * @param <T>    is a conventional letter that stands for "Type".
+   * @param entry an object that represents a record in LDAP.
    * @return a string DN.
    */
-  public <T> String buildDn(SlcwEntry entry, T object) {
+  public String buildDn(SlcwEntry entry) {
     //todo ?smthelse
     builder.delete(0, builder.length());
-    //todo store table information inside entry
+
     return builder
-        .append(object.getClass().getAnnotation(Table.class).property())
+        .append(entry.getTable().getPropertyName())
         .append("=")
-        .append(object.getClass().getAnnotation(Table.class).name())
+        .append(entry.getTable().getPropertyValue())
         .append(",")
         .append(entry.getBaseDn())
         .toString();
@@ -43,9 +40,9 @@ public class PropertyBuilder {
     builder.delete(0, builder.length());
 
     return builder
-        .append(entry.getId().getFieldName())
+        .append(entry.getId().getPropertyName())
         .append("=")
-        .append(entry.getId().getFiledValue())
+        .append(entry.getId().getPropertyValue())
         .toString();
   }
 }

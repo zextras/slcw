@@ -6,7 +6,7 @@ import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
 import com.zextras.persistence.mapping.SlcwEntry;
-import com.zextras.persistence.mapping.SlcwField;
+import com.zextras.persistence.mapping.SlcwProperty;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +20,10 @@ class SlcwConverterTests {
   @BeforeEach
   void setUp() {
     entry = new SlcwEntry();
-    Map<String, SlcwField> fields = new HashMap<>();
-    fields.put("givenName", new SlcwField("name", "Name"));
-    fields.put("sn", new SlcwField("surname", "Surname"));
-    fields.put("homePhone", new SlcwField("phoneNumber", 675479980));
+    Map<String, SlcwProperty> fields = new HashMap<>();
+    fields.put("givenName", new SlcwProperty("name", "Name"));
+    fields.put("sn", new SlcwProperty("surname", "Surname"));
+    fields.put("homePhone", new SlcwProperty("phoneNumber", 675479980));
     entry.setFields(fields);
   }
 
