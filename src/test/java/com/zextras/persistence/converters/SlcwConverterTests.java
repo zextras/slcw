@@ -19,7 +19,7 @@ class SlcwConverterTests {
 
   @BeforeEach
   void setUp() {
-    entry = new SlcwEntry();
+    entry = new SlcwEntry("dc=example,dc=com");
     Map<String, SlcwProperty> fields = new HashMap<>();
     fields.put("givenName", new SlcwProperty("name", "Name"));
     fields.put("sn", new SlcwProperty("surname", "Surname"));

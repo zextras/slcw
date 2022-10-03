@@ -45,7 +45,7 @@ class SlcwMapperTests {
   @Test
   void shouldThrowExceptionForNotEntityClass() {
     final Ticket ticket = new Ticket();
-    final SlcwEntry entry = new SlcwEntry();
+    final SlcwEntry entry = new SlcwEntry("dc=example,dc=com");
     assertThrows(SlcwException.class, () -> mapper.map(ticket, entry));
   }
 }

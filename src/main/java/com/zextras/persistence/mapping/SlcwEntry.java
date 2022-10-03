@@ -9,16 +9,13 @@ import java.util.Map;
  */
 public class SlcwEntry {
 
-  private String baseDn;
+  private final String baseDn;
   private String dn;
   private String filter;
   private SlcwProperty table;
   private SlcwProperty id = new SlcwProperty();
   private Map<String, SlcwProperty> fields = new HashMap<>();
   private Collection<?> attributes;
-
-  public SlcwEntry() {
-  }
 
   public SlcwEntry(String baseDn) {
     this.baseDn = baseDn;
@@ -34,10 +31,6 @@ public class SlcwEntry {
 
   public void setDn(String dn) {
     this.dn = dn;
-  }
-
-  public void setBaseDn(String baseDn) {
-    this.baseDn = baseDn;
   }
 
   public void setAttributes(Collection<?> attributes) {
