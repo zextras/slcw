@@ -28,7 +28,7 @@ class SlcwMapperTests {
     assertEquals(user.getSurname(), expectedEntry.getFields().get("sn").getFiledValue());
     assertEquals(user.getName(), expectedEntry.getFields().get("givenName").getFiledValue());
     assertEquals("dc=example,dc=com", expectedEntry.getBaseDn());
-    assertEquals(user.getUid(), expectedEntry.getId().getFiledValue());
+    assertEquals(user.getId(), expectedEntry.getId().getFiledValue());
   }
 
   @Test

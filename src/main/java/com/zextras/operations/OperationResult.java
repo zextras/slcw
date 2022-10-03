@@ -7,7 +7,6 @@ public class OperationResult {
 
   private final String name;
   private final int intValue;
-  private final String stringRepresentation;
 
   /**
    * @param name     plain message of an operation which is clear to you.
@@ -16,7 +15,6 @@ public class OperationResult {
   public OperationResult(String name, int intValue) {
     this.name = name;
     this.intValue = intValue;
-    this.stringRepresentation = intValue + " (" + name + ')';
   }
 
   public String getName() {
@@ -27,7 +25,8 @@ public class OperationResult {
     return intValue;
   }
 
-  public String getStringRepresentation() {
-    return stringRepresentation;
+  @Override
+  public String toString() {
+    return intValue + " (" + name + ')';
   }
 }

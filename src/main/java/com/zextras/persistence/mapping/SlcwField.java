@@ -1,7 +1,7 @@
 package com.zextras.persistence.mapping;
 
 /**
- * Class which represents a field of an object.*
+ * Class which represents a field of an object.
  */
 public class SlcwField {
 

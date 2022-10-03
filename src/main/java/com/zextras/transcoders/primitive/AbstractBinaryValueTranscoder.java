@@ -7,7 +7,7 @@ import com.zextras.utils.TranscoderUtils;
  */
 public abstract class AbstractBinaryValueTranscoder<T> implements ValueTranscoder<T> {
 
-  public AbstractBinaryValueTranscoder() {
+  protected AbstractBinaryValueTranscoder() {
   }
 
   /**

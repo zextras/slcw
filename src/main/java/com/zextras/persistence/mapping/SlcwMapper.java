@@ -37,7 +37,7 @@ public class SlcwMapper {
                 try {
                   value = String.valueOf(field.get(object));
                 } catch (IllegalAccessException e) {
-                  throw new RuntimeException(e);
+                  throw new SlcwException(e.getMessage());
                 }
                 entry.setId(new SlcwField(key, value));
                 mapEntry.put(key, new SlcwField(field.getName(), value));
@@ -48,7 +48,7 @@ public class SlcwMapper {
                 try {
                   value = (field.get(object));
                 } catch (IllegalAccessException e) {
-                  throw new RuntimeException(e);
+                  throw new SlcwException(e.getMessage());
                 }
                 mapEntry.put(key, new SlcwField(key, value));
               } else if (field.isAnnotationPresent(
@@ -60,7 +60,7 @@ public class SlcwMapper {
                 try {
                   value = field.get(object);
                 } catch (IllegalAccessException e) {
-                  throw new RuntimeException(e);
+                  throw new SlcwException(e.getMessage());
                 }
                 mapEntry.put(key, new SlcwField(field.getName(), value, binary));
               }
@@ -92,7 +92,7 @@ public class SlcwMapper {
                 try {
                   declaredField = object.getClass().getDeclaredField(fieldName);
                 } catch (NoSuchFieldException e) {
-                  throw new RuntimeException(e);
+                  throw new SlcwException(e.getMessage());
                 }
                 if (field.isBinary()) {
                   ReflectionUtils.setBinaryValue(

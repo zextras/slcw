@@ -1,15 +1,17 @@
 package com.zextras.slcwBeans;
 
+import com.zextras.SlcwBean;
+import com.zextras.SlcwClient;
 import com.zextras.persistence.annotations.*;
 
 import java.util.Objects;
 
 @Entity
 @Table(property = "ou", name = "users")
-public class User {
+public class User extends SlcwBean {
 
   @Id(name = "cn")
-  private String uid;
+  private String id;
   @ObjectClass
   private String objectClass;
   @Column(name = "givenName")
@@ -24,7 +26,7 @@ public class User {
   }
 
   public User(String objectClass, String name, String surname, long number) {
-    this.uid = name + " " + surname;
+    this.id = name + " " + surname;
     this.objectClass = objectClass;
     this.name = name;
     this.surname = surname;
@@ -47,8 +49,8 @@ public class User {
     return name;
   }
 
-  public void setUid(String uid) {
-    this.uid = uid;
+  public void setId(String id) {
+    this.id = id;
   }
 
   public void setObjectClass(String objectClass) {
@@ -67,8 +69,8 @@ public class User {
     return objectClass;
   }
 
-  public String getUid() {
-    return uid;
+  public String getId() {
+    return id;
   }
 
   @Override
@@ -80,13 +82,13 @@ public class User {
       return false;
     }
     User user = (User) o;
-    return anotherField == user.anotherField && uid.equals(user.uid) && Objects.equals(objectClass,
+    return anotherField == user.anotherField && id.equals(user.id) && Objects.equals(objectClass,
         user.objectClass) && Objects.equals(name, user.name) && Objects.equals(surname,
         user.surname) && Objects.equals(phoneNumber, user.phoneNumber);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uid, objectClass, name, surname, phoneNumber, anotherField);
+    return Objects.hash(id, objectClass, name, surname, phoneNumber, anotherField);
   }
 }

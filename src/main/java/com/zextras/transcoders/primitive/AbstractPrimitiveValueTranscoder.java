@@ -7,7 +7,7 @@ public abstract class AbstractPrimitiveValueTranscoder<T> extends AbstractString
 
   private boolean primitive;
 
-  public AbstractPrimitiveValueTranscoder() {
+  protected AbstractPrimitiveValueTranscoder() {
   }
 
   public boolean isPrimitive() {

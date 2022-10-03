@@ -39,7 +39,7 @@ public class PropertyBuilder {
    * @param entry an object that represents a record in LDAP.
    * @return a string filter.
    */
-  public <T> String buildFilter(SlcwEntry entry) {
+  public String buildFilter(SlcwEntry entry) {
     builder.delete(0, builder.length());
 
     return builder

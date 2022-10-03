@@ -1,8 +1,9 @@
 package com.zextras;
 
 import com.unboundid.ldap.sdk.*;
-import com.zextras.operations.ldap.LdapOperationExecutor;
+import com.zextras.operations.executors.LdapOperationExecutor;
 import com.zextras.operations.OperationResult;
+import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.converters.SlcwConverter;
 import com.zextras.persistence.mapping.SlcwEntry;
 import com.zextras.persistence.mapping.SlcwMapper;
@@ -11,14 +12,25 @@ import com.zextras.utils.ObjectFactory;
 
 /**
  * Main entrypoint for the library.
+ *
+ * @author Yuliya Aheeva
+ * @since 1.0.0
  */
 public class SlcwClient {
 
   //todo connection factory
   private LDAPConnection connection;
-  private final String baseDn;
+  private String baseDn;
   private final SlcwMapper mapper = new SlcwMapper();
   private final PropertyBuilder builder = new PropertyBuilder();
+
+  /**
+   * Creates a client that should be initialized with
+   * {@link #initialize(String, int, String, String, String) initialize} method.
+   */
+  public SlcwClient() {
+
+  }
 
   /**
    * Creates a client with an opened connection.
@@ -32,7 +44,7 @@ public class SlcwClient {
   }
 
   /**
-   * Creates a client, authenticate a user and change the identity of the client connection.
+   * Authenticate a user and open the client connection, otherwise throws an exception.
    *
    * @param host     a network layer host address.
    * @param port     a port on a host that connects it to the storage system.
@@ -40,16 +52,12 @@ public class SlcwClient {
    * @param password a secret word or phrase that allows access to the server.
    * @param baseDn   the starting point on the server.
    */
-  public SlcwClient(String host, int port, String bindDN, String password, String baseDn) {
+  public void initialize(String host, int port, String bindDN, String password, String baseDn) {
     this.baseDn = baseDn;
-    initialize(host, port, bindDN, password);
-  }
-
-  private void initialize(String host, int port, String bindDN, String password) {
     try {
       connection = new LDAPConnection(host, port, bindDN, password);
     } catch (LDAPException e) {
-      throw new RuntimeException(e);
+      throw new SlcwException(e.getExceptionMessage());
     }
   }
 
@@ -72,7 +80,6 @@ public class SlcwClient {
     entry.getId().setFiledValue(id);
     entry.setDn(builder.buildDn(entry, object));
     entry.setFilter(builder.buildFilter(entry));
-    entry.setSearchScope(SearchScope.ONE);
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
     executor.executeGetOperation(entry);
@@ -124,20 +131,15 @@ public class SlcwClient {
   /**
    * Remove an entry (record) from the structure.
    *
-   * @param id    a unique identifier that marks that particular record as unique from every other
-   *              record.
-   * @param clazz type of the class which represents an object that you wanted to get. (ex.
-   *              User.class)
-   * @param <T>   is a conventional letter that stands for "Type".
+   * @param object an object that you want to delete from the structure.
+   * @param <T>    is a conventional letter that stands for "Type".
    * @return a result of an adding operation. (ex. "0 (success)").
    */
-  public <T> OperationResult delete(String id, Class<T> clazz) {
+  public <T> OperationResult delete(T object) {
     SlcwEntry entry = new SlcwEntry(baseDn);
-    T object = ObjectFactory.newObject(clazz);
 
     mapper.map(object, entry);
 
-    entry.getId().setFiledValue(id);
     entry.setFilter(builder.buildFilter(entry));
     entry.setDn(builder.buildDn(entry, object));
 

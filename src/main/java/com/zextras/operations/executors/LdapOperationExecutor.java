@@ -1,7 +1,6 @@
-package com.zextras.operations.ldap;
+package com.zextras.operations.executors;
 
 import com.unboundid.ldap.sdk.*;
-import com.zextras.operations.AbstractOperationExecutor;
 import com.zextras.operations.OperationResult;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.mapping.SlcwEntry;
@@ -39,7 +38,7 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
       return new OperationResult(result.getResultCode().getName(),
           result.getResultCode().intValue());
     } catch (LDAPException e) {
-      throw new RuntimeException(e);
+      throw new SlcwException(e.getExceptionMessage());
     }
   }
 
@@ -56,7 +55,7 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
       return new OperationResult(result.getResultCode().getName(),
           result.getResultCode().intValue());
     } catch (LDAPException e) {
-      throw new RuntimeException(e);
+      throw new SlcwException(e.getExceptionMessage());
     }
   }
 
@@ -72,7 +71,7 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
       return new OperationResult(result.getResultCode().getName(),
           result.getResultCode().intValue());
     } catch (LDAPException e) {
-      throw new RuntimeException(e);
+      throw new SlcwException(e.getExceptionMessage());
     }
   }
 
@@ -83,7 +82,7 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
    * @return a result of the operation.
    */
   public OperationResult executeGetOperation(SlcwEntry entry) {
-    var result = search(entry.getDn(), entry.getSearchScope(), entry.getFilter());
+    var result = search(entry.getDn(), SearchScope.ONE, entry.getFilter());
     var searchResultEntries = result.getSearchEntries();
     if (searchResultEntries.isEmpty()) {
       throw new SlcwException(String.format("Object %s not found.", entry.getId().getFiledValue()));
@@ -98,7 +97,7 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
     try {
       searchResult = connection.search(baseDN, searchScope, filter);
     } catch (LDAPSearchException e) {
-      throw new RuntimeException(e);
+      throw new SlcwException(e.getExceptionMessage());
     }
     return searchResult;
   }

@@ -1,11 +1,19 @@
 package com.zextras.utils;
 
+import com.zextras.persistence.SlcwException;
 import java.lang.reflect.InvocationTargetException;
 
 /**
  * Helper util class that creates new objects.
  */
 public class ObjectFactory {
+
+  /**
+   * Private constructor used to restrict someone from instantiating utility class.
+   */
+  private ObjectFactory() {
+    throw new SlcwException("Utility class can not been instantiated.");
+  }
 
   /**
    * Create a new object of a given class if the class has a default constructor, otherwise throws
@@ -23,7 +31,7 @@ public class ObjectFactory {
              | IllegalAccessException
              | NoSuchMethodException
              | InvocationTargetException e) {
-      throw new RuntimeException(e);
+      throw new SlcwException(e.getMessage());
     }
     return object;
   }

@@ -1,7 +1,5 @@
 package com.zextras.persistence.mapping;
 
-import com.unboundid.ldap.sdk.SearchScope;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +13,6 @@ public class SlcwEntry {
   private SlcwField id;
   private String dn;
   private String filter;
-  private SearchScope searchScope;
   private Map<String, SlcwField> fields = new HashMap<>();
   private Collection<?> attributes;
 
@@ -50,10 +47,6 @@ public class SlcwEntry {
     this.filter = filter;
   }
 
-  public void setSearchScope(SearchScope searchScope) {
-    this.searchScope = searchScope;
-  }
-
   public SlcwField getId() {
     return id;
   }
@@ -76,9 +69,5 @@ public class SlcwEntry {
 
   public String getFilter() {
     return filter;
-  }
-
-  public SearchScope getSearchScope() {
-    return searchScope;
   }
 }

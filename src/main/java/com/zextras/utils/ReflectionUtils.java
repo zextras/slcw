@@ -1,5 +1,6 @@
 package com.zextras.utils;
 
+import com.zextras.persistence.SlcwException;
 import com.zextras.transcoders.reflection.DefaultReflectionTranscoder;
 
 import java.lang.reflect.Field;
@@ -8,6 +9,13 @@ import java.lang.reflect.Field;
  * Helper util class that performs reflecting operations.
  */
 public class ReflectionUtils {
+
+  /**
+   * Private constructor used to restrict someone from instantiating utility class.
+   */
+  private ReflectionUtils() {
+    throw new SlcwException("Utility class can not been instantiated.");
+  }
 
   /**
    * Sets a given field with a given value using reflection.
@@ -20,8 +28,8 @@ public class ReflectionUtils {
     field.setAccessible(true);
     try {
       field.set(object, value);
-    } catch (IllegalAccessException var) {
-      throw new IllegalArgumentException(var);
+    } catch (IllegalAccessException e) {
+      throw new SlcwException(e.getMessage());
     }
   }
 

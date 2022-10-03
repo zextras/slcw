@@ -1,6 +1,7 @@
 package com.zextras;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.unboundid.ldap.sdk.*;
 import com.zextras.persistence.SlcwException;
@@ -8,11 +9,10 @@ import com.zextras.operations.OperationResult;
 import com.zextras.slcwBeans.User;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.zapodot.junit.ldap.EmbeddedLdapRule;
 import org.zapodot.junit.ldap.EmbeddedLdapRuleBuilder;
 
-public class SlcwClientTests {
+public class SlcwClientIT {
 
   @Rule
   public EmbeddedLdapRule embeddedLdapRule =
@@ -37,7 +37,7 @@ public class SlcwClientTests {
         new SlcwClient(embeddedLdapRule.unsharedLdapConnection(), "dc=example,dc=com");
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
     final OperationResult result = client.add(user);
-    assertEquals("0 (success)", result.getStringRepresentation());
+    assertEquals("0 (success)", result.toString());
   }
 
   @Test
@@ -47,13 +47,13 @@ public class SlcwClientTests {
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
     client.add(user);
 
-    final User presentUser = client.getById(user.getUid(), User.class);
+    final User presentUser = client.getById(user.getId(), User.class);
     assertEquals(user, presentUser);
 
-    final OperationResult result = client.delete(user.getUid(), User.class);
-    assertEquals("0 (success)", result.getStringRepresentation());
+    final OperationResult result = client.delete(user);
+    assertEquals("0 (success)", result.toString());
 
-    Assertions.assertThrows(SlcwException.class, () -> client.getById(user.getUid(), User.class));
+    assertThrows(SlcwException.class, () -> client.getById(user.getId(), User.class));
   }
 
   @Test
@@ -63,14 +63,14 @@ public class SlcwClientTests {
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
 
     client.add(user);
-    final User presentUser = client.getById(user.getUid(), User.class);
+    final User presentUser = client.getById(user.getId(), User.class);
     assertEquals(user.getPhoneNumber(), presentUser.getPhoneNumber());
 
     user.setPhoneNumber(11111111);
     final OperationResult result = client.update(user);
-    assertEquals("0 (success)", result.getStringRepresentation());
+    assertEquals("0 (success)", result.toString());
 
-    final User modifiedUser = client.getById(user.getUid(), User.class);
+    final User modifiedUser = client.getById(user.getId(), User.class);
     assertEquals(user.getPhoneNumber(), modifiedUser.getPhoneNumber());
   }
 }

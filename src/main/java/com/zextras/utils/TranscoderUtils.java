@@ -1,11 +1,19 @@
 package com.zextras.utils;
 
+import com.zextras.persistence.SlcwException;
 import java.nio.charset.StandardCharsets;
 
 /**
  * Helper util class that performs transcoding operations.
  */
 public class TranscoderUtils {
+
+  /**
+   * Private constructor used to restrict someone from instantiating utility class.
+   */
+  private TranscoderUtils() {
+    throw new SlcwException("Utility class can not been instantiated.");
+  }
 
   /**
    * Encodes string value to byte array using Eight-bit UCS Transformation Format.

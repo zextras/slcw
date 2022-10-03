@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
-class DefaultReflectionTranscoderTest {
+class DefaultReflectionTranscoderTests {
 
   @Test
   void getValueTranscoder() {
