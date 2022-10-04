@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
-import com.zextras.persistence.mapping.SlcwEntry;
+import com.zextras.persistence.mapping.entries.SlcwEntry;
 import com.zextras.persistence.mapping.SlcwProperty;
 import java.util.HashMap;
 import java.util.List;

@@ -1,11 +1,12 @@
-package com.zextras.persistence.mapping;
+package com.zextras.persistence.mapping.entries;
 
+import com.zextras.persistence.mapping.SlcwProperty;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class which represents a record in the given structure.
+ * Class which represents a record in the given Ldap structure.
  */
 public class SlcwEntry {
 

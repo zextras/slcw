@@ -1,14 +1,16 @@
-package com.zextras.persistence.mapping;
+package com.zextras.persistence.mapping.mappers;
 
 import com.unboundid.ldap.sdk.Attribute;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.annotations.*;
+import com.zextras.persistence.mapping.SlcwProperty;
+import com.zextras.persistence.mapping.entries.SlcwEntry;
 import com.zextras.utils.PropertyBuilder;
 import com.zextras.utils.ReflectionUtils;
 import java.util.*;
 
 /**
- * Helper class that performs mapping operations.
+ * Helper class that performs mapping operations specific for Ldap.
  */
 public class SlcwMapper {
 

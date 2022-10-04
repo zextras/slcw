@@ -3,7 +3,7 @@ package com.zextras.persistence.converters;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
-import com.zextras.persistence.mapping.SlcwEntry;
+import com.zextras.persistence.mapping.entries.SlcwEntry;
 import java.util.List;
 import java.util.stream.Collectors;
 

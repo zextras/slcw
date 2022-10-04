@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.converters.SlcwConverter;
+import com.zextras.persistence.mapping.entries.SlcwEntry;
+import com.zextras.persistence.mapping.mappers.SlcwMapper;
 import com.zextras.slcwBeans.Ticket;
 import com.zextras.slcwBeans.User;
 import org.junit.jupiter.api.BeforeEach;

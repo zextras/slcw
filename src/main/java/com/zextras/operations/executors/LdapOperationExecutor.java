@@ -1,9 +1,9 @@
 package com.zextras.operations.executors;
 
 import com.unboundid.ldap.sdk.*;
-import com.zextras.operations.OperationResult;
+import com.zextras.operations.results.LdapOperationResult;
 import com.zextras.persistence.SlcwException;
-import com.zextras.persistence.mapping.SlcwEntry;
+import com.zextras.persistence.mapping.entries.SlcwEntry;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,11 +31,11 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
    * @param entry a representation of an object and a future corresponding record in the structure.
    * @return a result of the operation.
    */
-  public OperationResult executeAddOperation(SlcwEntry entry) {
+  public LdapOperationResult executeAddOperation(SlcwEntry entry) {
     Collection<Attribute> attributes = (Collection<Attribute>) entry.getAttributes();
     try {
       LDAPResult result = connection.add(entry.getFilter() + "," + entry.getDn(), attributes);
-      return new OperationResult(result.getResultCode().getName(),
+      return new LdapOperationResult(result.getResultCode().getName(),
           result.getResultCode().intValue());
     } catch (LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
@@ -48,11 +48,11 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
    * @param entry a representation of an object and a future corresponding record in the structure.
    * @return a result of the operation.
    */
-  public OperationResult executeUpdateOperation(SlcwEntry entry) {
+  public LdapOperationResult executeUpdateOperation(SlcwEntry entry) {
     List<Modification> modifications = (List<Modification>) entry.getAttributes();
     try {
       LDAPResult result = connection.modify(entry.getFilter() + "," + entry.getDn(), modifications);
-      return new OperationResult(result.getResultCode().getName(),
+      return new LdapOperationResult(result.getResultCode().getName(),
           result.getResultCode().intValue());
     } catch (LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
@@ -65,10 +65,10 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
    * @param entry a representation of an object and a future corresponding record in the structure.
    * @return a result of the operation.
    */
-  public OperationResult executeDeleteOperation(SlcwEntry entry) {
+  public LdapOperationResult executeDeleteOperation(SlcwEntry entry) {
     try {
       LDAPResult result = connection.delete(entry.getFilter() + "," + entry.getDn());
-      return new OperationResult(result.getResultCode().getName(),
+      return new LdapOperationResult(result.getResultCode().getName(),
           result.getResultCode().intValue());
     } catch (LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
@@ -81,15 +81,13 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
    * @param entry a representation of an object and a future corresponding record in the structure.
    * @return a result of the operation.
    */
-  public OperationResult executeGetOperation(SlcwEntry entry) {
+  public LdapOperationResult executeGetOperation(SlcwEntry entry) {
     var result = search(entry.getDn(), SearchScope.ONE, entry.getFilter());
     var searchResultEntries = result.getSearchEntries();
     if (searchResultEntries.isEmpty()) {
       throw new SlcwException(String.format("Object %s not found.", entry.getId().getPropertyValue()));
     }
-
-    entry.setAttributes(searchResultEntries.get(0).getAttributes());
-    return new OperationResult(result.getResultCode().getName(), result.getResultCode().intValue());
+    return new LdapOperationResult(result.getResultCode().getName(), result.getResultCode().intValue(), searchResultEntries.get(0).getAttributes());
   }
 
   private SearchResult search(String baseDN, SearchScope searchScope, String filter) {

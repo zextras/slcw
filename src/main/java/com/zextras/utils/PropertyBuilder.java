@@ -1,6 +1,6 @@
 package com.zextras.utils;
 
-import com.zextras.persistence.mapping.SlcwEntry;
+import com.zextras.persistence.mapping.entries.SlcwEntry;
 
 /**
  * Helper util class that performs string building operations.

@@ -1,7 +1,7 @@
 package com.zextras.operations.executors;
 
-import com.zextras.operations.OperationResult;
-import com.zextras.persistence.mapping.SlcwEntry;
+import com.zextras.operations.results.OperationResult;
+import com.zextras.persistence.mapping.entries.SlcwEntry;
 
 /**
  * An OperationExecutor relies on a separate executor to actually execute the tasks.

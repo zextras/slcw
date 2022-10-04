@@ -2,11 +2,12 @@ package com.zextras;
 
 import com.unboundid.ldap.sdk.*;
 import com.zextras.operations.executors.LdapOperationExecutor;
-import com.zextras.operations.OperationResult;
+import com.zextras.operations.results.LdapOperationResult;
+import com.zextras.operations.results.OperationResult;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.converters.SlcwConverter;
-import com.zextras.persistence.mapping.SlcwEntry;
-import com.zextras.persistence.mapping.SlcwMapper;
+import com.zextras.persistence.mapping.entries.SlcwEntry;
+import com.zextras.persistence.mapping.mappers.SlcwMapper;
 import com.zextras.utils.ObjectFactory;
 
 /**
@@ -76,7 +77,8 @@ public class SlcwClient {
     mapper.map(object, entry);
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
-    executor.executeGetOperation(entry);
+    LdapOperationResult result = executor.executeGetOperation(entry);
+    entry.setAttributes(result.getAttributes());
 
     mapper.map(entry, object);
     return object;

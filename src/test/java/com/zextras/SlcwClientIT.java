@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.unboundid.ldap.sdk.*;
 import com.zextras.persistence.SlcwException;
-import com.zextras.operations.OperationResult;
+import com.zextras.operations.results.OperationResult;
 import com.zextras.slcwBeans.User;
 import org.junit.Rule;
 import org.junit.Test;
