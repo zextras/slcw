@@ -3,6 +3,7 @@ package com.zextras.persistence.converters;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
+import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.mapping.entries.SlcwEntry;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +12,13 @@ import java.util.stream.Collectors;
  * Helper class that performs converting operations.
  */
 public class SlcwConverter {
+
+  /**
+   * Private constructor used to restrict someone from instantiating utility class.
+   */
+  private SlcwConverter() {
+    throw new SlcwException("SlcwConverter class cannot be instantiated.");
+  }
 
   /**
    * Converts an entry to a list of attributes which this entry has.*
