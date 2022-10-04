@@ -12,7 +12,7 @@ public class TranscoderUtils {
    * Private constructor used to restrict someone from instantiating utility class.
    */
   private TranscoderUtils() {
-    throw new SlcwException("Utility class can not been instantiated.");
+    throw new SlcwException("Utility class cannot been instantiated.");
   }
 
   /**

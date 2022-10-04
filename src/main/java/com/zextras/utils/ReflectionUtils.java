@@ -14,7 +14,7 @@ public class ReflectionUtils {
    * Private constructor used to restrict someone from instantiating utility class.
    */
   private ReflectionUtils() {
-    throw new SlcwException("Utility class can not been instantiated.");
+    throw new SlcwException("Utility class cannot been instantiated.");
   }
 
   /**

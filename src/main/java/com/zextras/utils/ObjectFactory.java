@@ -12,7 +12,7 @@ public class ObjectFactory {
    * Private constructor used to restrict someone from instantiating utility class.
    */
   private ObjectFactory() {
-    throw new SlcwException("Utility class can not been instantiated.");
+    throw new SlcwException("Utility class cannot been instantiated.");
   }
 
   /**
