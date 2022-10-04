@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Helper class that performs mapping operations specific for Ldap.
  */
-public class SlcwMapper {
+public class SlcwMapper implements Mapper<SlcwEntry> {
 
   private final PropertyBuilder builder = new PropertyBuilder();
 
@@ -23,6 +23,8 @@ public class SlcwMapper {
    * @param entry  a destination object of mapping.
    * @param <T>    is a conventional letter that stands for "Type".
    */
+
+  @Override
   public <T> void map(T object, SlcwEntry entry) {
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
       throw new SlcwException("Class should be mark with @Entity annotation.");
@@ -95,6 +97,7 @@ public class SlcwMapper {
    * @param object object of the Type that you want to get.
    * @param <T>    is a conventional letter that stands for "Type".
    */
+  @Override
   public <T> void map(SlcwEntry entry, T object) {
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
       throw new SlcwException("Class should be mark with @Entity annotation.");

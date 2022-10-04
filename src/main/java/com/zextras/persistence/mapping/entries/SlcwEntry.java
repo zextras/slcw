@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Class which represents a record in the given Ldap structure.
  */
-public class SlcwEntry {
+public class SlcwEntry extends Entry {
 
   private final String baseDn;
   private String dn;

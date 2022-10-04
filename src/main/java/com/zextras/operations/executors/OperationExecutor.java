@@ -1,7 +1,7 @@
 package com.zextras.operations.executors;
 
 import com.zextras.operations.results.OperationResult;
-import com.zextras.persistence.mapping.entries.SlcwEntry;
+import com.zextras.persistence.mapping.entries.Entry;
 
 /**
  * An OperationExecutor relies on a separate executor to actually execute the tasks.
@@ -9,13 +9,13 @@ import com.zextras.persistence.mapping.entries.SlcwEntry;
  * All Known Implementing Classes: {@link AbstractOperationExecutor},
  * {@link LdapOperationExecutor}.
  */
-public interface OperationExecutor {
+public interface OperationExecutor<T extends Entry> {
 
-  OperationResult executeAddOperation(SlcwEntry entry);
+  OperationResult executeAddOperation(T entry);
 
-  OperationResult executeUpdateOperation(SlcwEntry entry);
+  OperationResult executeUpdateOperation(T entry);
 
-  OperationResult executeDeleteOperation(SlcwEntry entry);
+  OperationResult executeDeleteOperation(T entry);
 
-  OperationResult executeGetOperation(SlcwEntry entry);
+  OperationResult executeGetOperation(T entry);
 }

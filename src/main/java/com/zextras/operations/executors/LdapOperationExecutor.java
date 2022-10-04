@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Helper class that interacts with LDAP server and performs CRUD operations.
  */
-public class LdapOperationExecutor extends AbstractOperationExecutor {
+public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> {
 
   private final LDAPConnection connection;
 
