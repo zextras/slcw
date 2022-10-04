@@ -85,9 +85,11 @@ public class LdapOperationExecutor extends AbstractOperationExecutor {
     var result = search(entry.getDn(), SearchScope.ONE, entry.getFilter());
     var searchResultEntries = result.getSearchEntries();
     if (searchResultEntries.isEmpty()) {
-      throw new SlcwException(String.format("Object %s not found.", entry.getId().getPropertyValue()));
+      throw new SlcwException(
+          String.format("Object %s not found.", entry.getId().getPropertyValue()));
     }
-    return new LdapOperationResult(result.getResultCode().getName(), result.getResultCode().intValue(), searchResultEntries.get(0).getAttributes());
+    return new LdapOperationResult(result.getResultCode().getName(),
+        result.getResultCode().intValue(), searchResultEntries.get(0).getAttributes());
   }
 
   private SearchResult search(String baseDN, SearchScope searchScope, String filter) {
