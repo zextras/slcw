@@ -18,7 +18,6 @@ import com.zextras.utils.ObjectFactory;
  */
 public class SlcwClient {
 
-  //todo connection factory
   private LDAPConnection connection;
   private String baseDn;
   private final SlcwMapper mapper = new SlcwMapper();

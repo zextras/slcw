@@ -138,6 +138,7 @@
       <groupId>org.zapodot</groupId>
       <artifactId>embedded-ldap-junit</artifactId>
       <version>${ldap-junit.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
