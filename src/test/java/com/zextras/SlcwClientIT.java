@@ -20,7 +20,7 @@ public class SlcwClientIT extends LdapIT {
   private SlcwClient client;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     LDAPConnection connection = new LdapConnectionFactory(
         LdapConnectionConfig.builder()
             .host(container.getHost())
@@ -33,7 +33,7 @@ public class SlcwClientIT extends LdapIT {
   }
 
   @Test
-  public void shouldGetById() {
+  void shouldGetById() {
     final User expectedUser = new User("inetOrgPerson", "Name", "Surname", 6785949);
     client.add(expectedUser);
     final User actualUser = client.getById("Name Surname", User.class);
@@ -41,14 +41,14 @@ public class SlcwClientIT extends LdapIT {
   }
 
   @Test
-  public void shouldReturnSuccessOnAddOperation() {
+  void shouldReturnSuccessOnAddOperation() {
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
     final OperationResult result = client.add(user);
     assertEquals("0 (success)", result.toString());
   }
 
   @Test
-  public void shouldReturnSuccessOnDeleteOperation() {
+  void shouldReturnSuccessOnDeleteOperation() {
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
     client.add(user);
 
@@ -62,7 +62,7 @@ public class SlcwClientIT extends LdapIT {
   }
 
   @Test
-  public void shouldReturnSuccessOnUpdateOperation() throws LDAPException {
+  void shouldReturnSuccessOnUpdateOperation() throws LDAPException {
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
 
     client.add(user);
@@ -81,7 +81,7 @@ public class SlcwClientIT extends LdapIT {
    * Total execution time for count: 0.83s, count result is = 80000.
    */
   @Test
-  public void shouldCountLargeNumberOfData() {
+  void shouldCountLargeNumberOfData() {
     for (int i = 0; i < 80000; i++) {
       final User user = new User("inetOrgPerson", "Name" + i, "Surname", i);
       client.add(user);
