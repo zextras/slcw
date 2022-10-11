@@ -6,14 +6,14 @@ import com.zextras.persistence.annotations.*;
 import java.util.Objects;
 
 @Entity
-@Table(property = "ou", name = "users")
+@Table(property = "ou", name = "people")
 public class User extends SlcwBean {
 
-  @Id(name = "cn")
+  @Id(name = "uid")
   private String id;
   @ObjectClass
   private String objectClass;
-  @Column(name = "givenName")
+  @Column(name = "cn")
   private String name;
   @Column(name = "sn")
   private String surname;

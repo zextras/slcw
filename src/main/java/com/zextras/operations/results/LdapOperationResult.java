@@ -1,15 +1,16 @@
 package com.zextras.operations.results;
 
-import com.unboundid.ldap.sdk.Attribute;
+import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.zextras.persistence.mapping.entries.SlcwEntry;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Class that provides information about the result specific for Ldap operations you perform.
  */
 public class LdapOperationResult extends OperationResult {
 
-  private Collection<Attribute> attributes;
+  private long entriesReturned;
+  private List<SearchResultEntry> entries;
 
   /**
    * Creates a Ldap operation result with code value and message information.
@@ -25,22 +26,43 @@ public class LdapOperationResult extends OperationResult {
    * Creates a Ldap operation result with code value, message information and attributes of an
    * object you were searching for with
    * {@link com.zextras.operations.executors.LdapOperationExecutor#executeGetOperation(SlcwEntry)
-   * executeGetOperation} method.
+   * executeCountOperation} method.
    *
-   * @param name       plain message of an operation which is clear to you.
-   * @param intValue   plain operation code which is clear to you.
-   * @param attributes attributes of an object you were searching for.
+   * @param name     plain message of an operation which is clear to you.
+   * @param intValue plain operation code which is clear to you.
+   * @param entries  search operation matching entries.
    */
-  public LdapOperationResult(String name, int intValue, Collection<Attribute> attributes) {
+
+  public LdapOperationResult(String name, int intValue, List<SearchResultEntry> entries) {
     super(name, intValue);
-    this.attributes = attributes;
+    this.entries = entries;
   }
 
-  public void setAttributes(Collection<Attribute> attributes) {
-    this.attributes = attributes;
+  public LdapOperationResult(String name, int intValue, long entriesReturned) {
+    super(name, intValue);
+    this.entriesReturned = entriesReturned;
   }
 
-  public Collection<Attribute> getAttributes() {
-    return attributes;
+  public LdapOperationResult(String name, int intValue, long entriesReturned,
+      List<SearchResultEntry> entries) {
+    super(name, intValue);
+    this.entriesReturned = entriesReturned;
+    this.entries = entries;
+  }
+
+  public List<SearchResultEntry> getEntries() {
+    return entries;
+  }
+
+  public void setEntries(List<SearchResultEntry> entries) {
+    this.entries = entries;
+  }
+
+  public long getEntriesReturned() {
+    return entriesReturned;
+  }
+
+  public void setEntriesReturned(long entriesReturned) {
+    this.entriesReturned = entriesReturned;
   }
 }

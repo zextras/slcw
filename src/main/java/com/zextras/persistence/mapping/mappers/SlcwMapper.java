@@ -1,11 +1,11 @@
 package com.zextras.persistence.mapping.mappers;
 
 import com.unboundid.ldap.sdk.Attribute;
+import com.zextras.persistence.Filter;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.annotations.*;
 import com.zextras.persistence.mapping.SlcwProperty;
 import com.zextras.persistence.mapping.entries.SlcwEntry;
-import com.zextras.utils.PropertyBuilder;
 import com.zextras.utils.ReflectionUtils;
 import java.util.*;
 
@@ -13,8 +13,6 @@ import java.util.*;
  * Helper class that performs mapping operations specific for Ldap.
  */
 public class SlcwMapper implements Mapper<SlcwEntry> {
-
-  private final PropertyBuilder builder = new PropertyBuilder();
 
   /**
    * Maps an object to the representation entry in matter to perform CRUD operations.*
@@ -33,10 +31,6 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
     if (!object.getClass().isAnnotationPresent(Table.class)) {
       throw new SlcwException("Class should be mark with @Table annotation.");
     }
-
-    entry.setTable(new SlcwProperty(
-        object.getClass().getAnnotation(Table.class).property(),
-        object.getClass().getAnnotation(Table.class).name()));
 
     var mapEntry = entry.getFields();
 
@@ -59,6 +53,7 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
                 if (id.getPropertyValue() == null) {
                   id.setPropertyValue(value);
                 }
+                entry.setFilter(new Filter(key + "=" + id.getPropertyValue()));
                 mapEntry.put(key, id);
               } else if (field.isAnnotationPresent(ObjectClass.class)) {
                 var annotationProperty = field.getAnnotation(ObjectClass.class);
@@ -85,8 +80,11 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
               }
             });
 
-    entry.setDn(builder.buildDn(entry));
-    entry.setFilter(builder.buildFilter(entry));
+    entry.setDn(object.getClass().getAnnotation(Table.class).property()
+        + "="
+        + object.getClass().getAnnotation(Table.class).name()
+        + ","
+        + entry.getBaseDn());
   }
 
   /**

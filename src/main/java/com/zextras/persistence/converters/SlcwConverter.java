@@ -43,7 +43,7 @@ public class SlcwConverter {
   //todo converter interface with different implementations
 
   /**
-   * Converts an entry to a list of modifications which you want to apply.*
+   * Converts an entry to a list of modifications which you want to applyFilter.*
    *
    * @param entry a representation of a record in the structure.
    * @return list of modifications that can be stored.

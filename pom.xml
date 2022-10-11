@@ -36,7 +36,6 @@
     <org.testcontainers.junit-jupiter.version>1.17.3</org.testcontainers.junit-jupiter.version>
     <system-stubs-jupiter.version>2.0.1</system-stubs-jupiter.version>
     <unboundid-sdk.version>6.0.6</unboundid-sdk.version>
-    <ldap-junit.version>0.9.0</ldap-junit.version>
   </properties>
 
   <build>
@@ -132,12 +131,6 @@
       <groupId>uk.org.webcompere</groupId>
       <artifactId>system-stubs-jupiter</artifactId>
       <version>${system-stubs-jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.zapodot</groupId>
-      <artifactId>embedded-ldap-junit</artifactId>
-      <version>${ldap-junit.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

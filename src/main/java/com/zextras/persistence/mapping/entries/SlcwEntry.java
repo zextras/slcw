@@ -1,5 +1,6 @@
 package com.zextras.persistence.mapping.entries;
 
+import com.zextras.persistence.Filter;
 import com.zextras.persistence.mapping.SlcwProperty;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,8 +13,7 @@ public class SlcwEntry extends Entry {
 
   private final String baseDn;
   private String dn;
-  private String filter;
-  private SlcwProperty table;
+  private Filter filter;
   private SlcwProperty id = new SlcwProperty();
   private Map<String, SlcwProperty> fields = new HashMap<>();
   private Collection<?> attributes;
@@ -38,12 +38,8 @@ public class SlcwEntry extends Entry {
     this.attributes = attributes;
   }
 
-  public void setFilter(String filter) {
+  public void setFilter(Filter filter) {
     this.filter = filter;
-  }
-
-  public void setTable(SlcwProperty table) {
-    this.table = table;
   }
 
   public SlcwProperty getId() {
@@ -66,11 +62,7 @@ public class SlcwEntry extends Entry {
     return attributes;
   }
 
-  public String getFilter() {
+  public Filter getFilter() {
     return filter;
-  }
-
-  public SlcwProperty getTable() {
-    return table;
   }
 }
