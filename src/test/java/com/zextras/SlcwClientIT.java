@@ -93,9 +93,7 @@ public class SlcwClientIT extends LdapIT {
         .applyFilter("objectClass=inetOrgPerson")
         .build();
 
-    final long startTime = System.currentTimeMillis();
     final long count = client.countBy(filter);
-    final long endTime = System.currentTimeMillis();
 
     assertEquals(80000, count);
   }
