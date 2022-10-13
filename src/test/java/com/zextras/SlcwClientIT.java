@@ -21,7 +21,7 @@ public class SlcwClientIT extends LdapIT {
 
   @BeforeEach
   void setUp() {
-    LDAPConnection connection = new LdapConnectionFactory(
+    final LDAPConnection connection = new LdapConnectionFactory(
         LdapConnectionConfig.builder()
             .host(container.getHost())
             .port(container.getMappedPort(389))

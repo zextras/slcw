@@ -8,7 +8,7 @@ public class ShortValueTranscoder extends AbstractPrimitiveValueTranscoder<Short
   public ShortValueTranscoder() {
   }
 
-  public ShortValueTranscoder(boolean b) {
+  public ShortValueTranscoder(final boolean b) {
     this.setPrimitive(b);
   }
 
@@ -18,7 +18,7 @@ public class ShortValueTranscoder extends AbstractPrimitiveValueTranscoder<Short
    * @param value string that you want to get a short value from.
    * @return a short object - the result of transcoding operation.
    */
-  public Short decodeStringValue(String value) {
+  public Short decodeStringValue(final String value) {
     return Short.valueOf(value);
   }
 

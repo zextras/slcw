@@ -23,14 +23,14 @@ public class ObjectFactory {
    * @param <T>   is a conventional letter that stands for "Type".
    * @return a new object of a given class.
    */
-  public static <T> T newObject(Class<T> clazz) {
-    T object;
+  public static <T> T newObject(final Class<T> clazz) {
+    final T object;
     try {
       object = clazz.getDeclaredConstructor().newInstance();
-    } catch (InstantiationException
-             | IllegalAccessException
-             | NoSuchMethodException
-             | InvocationTargetException e) {
+    } catch (final InstantiationException
+                   | IllegalAccessException
+                   | NoSuchMethodException
+                   | InvocationTargetException e) {
       throw new SlcwException(e.getMessage());
     }
     return object;

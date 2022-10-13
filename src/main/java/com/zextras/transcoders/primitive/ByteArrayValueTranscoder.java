@@ -14,7 +14,7 @@ public class ByteArrayValueTranscoder extends AbstractBinaryValueTranscoder<byte
    * @param value byte array.
    * @return a given value.
    */
-  public byte[] decodeBinaryValue(byte[] value) {
+  public byte[] decodeBinaryValue(final byte[] value) {
     return value;
   }
 

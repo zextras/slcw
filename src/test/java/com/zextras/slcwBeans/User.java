@@ -24,7 +24,8 @@ public class User extends SlcwBean {
   public User() {
   }
 
-  public User(String objectClass, String name, String surname, long number) {
+  public User(final String objectClass, final String name, final String surname,
+      final long number) {
     this.id = name + " " + surname;
     this.objectClass = objectClass;
     this.name = name;
@@ -32,15 +33,15 @@ public class User extends SlcwBean {
     this.phoneNumber = number;
   }
 
-  public void setName(String name) {
+  public void setName(final String name) {
     this.name = name;
   }
 
-  public void setSurname(String surname) {
+  public void setSurname(final String surname) {
     this.surname = surname;
   }
 
-  public void setPhoneNumber(long phoneNumber) {
+  public void setPhoneNumber(final long phoneNumber) {
     this.phoneNumber = phoneNumber;
   }
 
@@ -48,11 +49,11 @@ public class User extends SlcwBean {
     return name;
   }
 
-  public void setId(String id) {
+  public void setId(final String id) {
     this.id = id;
   }
 
-  public void setObjectClass(String objectClass) {
+  public void setObjectClass(final String objectClass) {
     this.objectClass = objectClass;
   }
 
@@ -73,14 +74,14 @@ public class User extends SlcwBean {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }
     if (!(o instanceof User)) {
       return false;
     }
-    User user = (User) o;
+    final User user = (User) o;
     return anotherField == user.anotherField && id.equals(user.id) && Objects.equals(objectClass,
         user.objectClass) && Objects.equals(name, user.name) && Objects.equals(surname,
         user.surname) && Objects.equals(phoneNumber, user.phoneNumber);

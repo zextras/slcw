@@ -20,7 +20,7 @@ public class Filter {
   public Filter() {
   }
 
-  public Filter(String filter) {
+  public Filter(final String filter) {
     this.filter = filter;
   }
 
@@ -49,7 +49,7 @@ public class Filter {
    * @param searchScope the scope that specifies the range of entries that should be examined for
    *                    the search.
    */
-  public Filter(String dn, String filter, SearchScope searchScope) {
+  public Filter(final String dn, final String filter, final SearchScope searchScope) {
     this.dn = dn;
     this.filter = filter;
     this.searchScope = searchScope;
@@ -60,7 +60,7 @@ public class Filter {
     return filter;
   }
 
-  public void setFilter(String filter) {
+  public void setFilter(final String filter) {
     this.filter = filter;
   }
 
@@ -68,7 +68,7 @@ public class Filter {
     return searchScope;
   }
 
-  public void setSearchScope(SearchScope searchScope) {
+  public void setSearchScope(final SearchScope searchScope) {
     this.searchScope = searchScope;
   }
 
@@ -85,7 +85,7 @@ public class Filter {
     return dn;
   }
 
-  public void setDn(String dn) {
+  public void setDn(final String dn) {
     this.dn = dn;
   }
 
@@ -108,7 +108,7 @@ public class Filter {
      *           client.
      * @return {@link Builder}.
      */
-    public Builder dn(String dn) {
+    public Builder dn(final String dn) {
       this.filter.setDn(dn);
       return this;
     }
@@ -127,7 +127,7 @@ public class Filter {
      *                      ex. "cn=Santa Claus"
      * @return {@link Builder}.
      */
-    public Builder applyFilter(String filterToApply) {
+    public Builder applyFilter(final String filterToApply) {
       if (builder.length() == 0) {
         builder.append("(&");
       }
@@ -145,7 +145,7 @@ public class Filter {
      *                    the search.
      * @return {@link Builder}.
      */
-    public Builder searchScope(SearchScope searchScope) {
+    public Builder searchScope(final SearchScope searchScope) {
       this.filter.setSearchScope(searchScope);
       return this;
     }

@@ -8,7 +8,7 @@ public class BooleanValueTranscoder extends AbstractPrimitiveValueTranscoder<Boo
   public BooleanValueTranscoder() {
   }
 
-  public BooleanValueTranscoder(boolean b) {
+  public BooleanValueTranscoder(final boolean b) {
     this.setPrimitive(b);
   }
 
@@ -18,7 +18,7 @@ public class BooleanValueTranscoder extends AbstractPrimitiveValueTranscoder<Boo
    * @param value string that you want to get a boolean value from.
    * @return a double object - the result of transcoding operation.
    */
-  public Boolean decodeStringValue(String value) {
+  public Boolean decodeStringValue(final String value) {
     return Boolean.valueOf(value);
   }
 

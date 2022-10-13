@@ -30,19 +30,19 @@ public class LdapConnectionConfig extends AbstractConfig {
     return new Builder();
   }
 
-  private void setHost(String host) {
+  private void setHost(final String host) {
     this.host = host;
   }
 
-  private void setPort(int port) {
+  private void setPort(final int port) {
     this.port = port;
   }
 
-  private void setBindDn(String bindDn) {
+  private void setBindDn(final String bindDn) {
     this.bindDn = bindDn;
   }
 
-  private void setPassword(Password password) {
+  private void setPassword(final Password password) {
     this.password = password;
   }
 
@@ -78,7 +78,7 @@ public class LdapConnectionConfig extends AbstractConfig {
      * @param host a network layer host address.
      * @return {@link Builder}.
      */
-    public Builder host(String host) {
+    public Builder host(final String host) {
       this.object.setHost(host);
       return this;
     }
@@ -89,7 +89,7 @@ public class LdapConnectionConfig extends AbstractConfig {
      * @param port a port on a host that connects it to the storage system.
      * @return {@link Builder}.
      */
-    public Builder port(int port) {
+    public Builder port(final int port) {
       this.object.setPort(port);
       return this;
     }
@@ -100,7 +100,7 @@ public class LdapConnectionConfig extends AbstractConfig {
      * @param bindDN a Username used to connect to the server.
      * @return {@link Builder}.
      */
-    public Builder bindDN(String bindDN) {
+    public Builder bindDN(final String bindDN) {
       this.object.setBindDn(bindDN);
       return this;
     }
@@ -111,7 +111,7 @@ public class LdapConnectionConfig extends AbstractConfig {
      * @param password a secret word or phrase that allows access to the server.
      * @return {@link Builder}.
      */
-    public Builder password(String password) {
+    public Builder password(final String password) {
       this.object.setPassword(new Password(password));
       return this;
     }
@@ -122,7 +122,7 @@ public class LdapConnectionConfig extends AbstractConfig {
      * @param password a secret word or phrase that allows access to the server.
      * @return {@link Builder}.
      */
-    public Builder password(byte[] password) {
+    public Builder password(final byte[] password) {
       this.object.setPassword(new Password(password));
       return this;
     }

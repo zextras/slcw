@@ -12,13 +12,13 @@ public class SlcwProperty {
   public SlcwProperty() {
   }
 
-  public SlcwProperty(String propertyName, Object propertyValue, boolean binary) {
+  public SlcwProperty(final String propertyName, final Object propertyValue, final boolean binary) {
     this.propertyName = propertyName;
     this.propertyValue = propertyValue;
     this.binary = binary;
   }
 
-  public SlcwProperty(String propertyName, Object propertyValue) {
+  public SlcwProperty(final String propertyName, final Object propertyValue) {
     this.propertyName = propertyName;
     this.propertyValue = propertyValue;
   }
@@ -35,15 +35,15 @@ public class SlcwProperty {
     return propertyName;
   }
 
-  public void setPropertyName(String propertyName) {
+  public void setPropertyName(final String propertyName) {
     this.propertyName = propertyName;
   }
 
-  public void setPropertyValue(Object propertyValue) {
+  public void setPropertyValue(final Object propertyValue) {
     this.propertyValue = propertyValue;
   }
 
-  public void setBinary(boolean binary) {
+  public void setBinary(final boolean binary) {
     this.binary = binary;
   }
 }

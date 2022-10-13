@@ -15,7 +15,7 @@ public class ObjectValueTranscoder implements ValueTranscoder<Object> {
    * @param value a string you want to have an object from.
    * @return object.
    */
-  public Object decodeStringValue(String value) {
+  public Object decodeStringValue(final String value) {
     return value;
   }
 
@@ -25,7 +25,7 @@ public class ObjectValueTranscoder implements ValueTranscoder<Object> {
    * @param value a byte array you want to have an object from.
    * @return object.
    */
-  public Object decodeBinaryValue(byte[] value) {
+  public Object decodeBinaryValue(final byte[] value) {
     return value;
   }
 

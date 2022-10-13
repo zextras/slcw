@@ -17,7 +17,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder {
    *
    * @param type a class for which you want to get a transcoder.
    */
-  public DefaultReflectionTranscoder(Class<?> type) {
+  public DefaultReflectionTranscoder(final Class<?> type) {
     this.singleValueTranscoders = this.getDefaultSingleValueTranscoders();
     this.valueTranscoder = getSingleValueReflectionTranscoder(type);
   }
@@ -26,8 +26,9 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder {
     return valueTranscoder;
   }
 
-  protected SingleValueReflectionTranscoder getSingleValueReflectionTranscoder(Class<?> type) {
-    Iterator var2 = this.singleValueTranscoders.iterator();
+  protected SingleValueReflectionTranscoder getSingleValueReflectionTranscoder(
+      final Class<?> type) {
+    final Iterator var2 = this.singleValueTranscoders.iterator();
 
     SingleValueReflectionTranscoder transcoder;
     boolean supports;
@@ -44,7 +45,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder {
   }
 
   protected Set<SingleValueReflectionTranscoder<?>> getDefaultSingleValueTranscoders() {
-    Set<SingleValueReflectionTranscoder<?>> transcoders = new HashSet();
+    final Set<SingleValueReflectionTranscoder<?>> transcoders = new HashSet();
     transcoders.add(new SingleValueReflectionTranscoder(new ObjectValueTranscoder()));
     transcoders.add(new SingleValueReflectionTranscoder(new BooleanValueTranscoder()));
     transcoders.add(new SingleValueReflectionTranscoder(new BooleanValueTranscoder(true)));
@@ -71,7 +72,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder {
    * @return corresponding object of transcoding operation.
    */
   @Override
-  public Object decodeStringValue(String var) {
+  public Object decodeStringValue(final String var) {
     return this.valueTranscoder.decodeStringValue(var);
   }
 }

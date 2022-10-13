@@ -14,7 +14,7 @@ public abstract class OperationResult {
    * @param name     plain message of an operation which is clear to you.
    * @param intValue plain operation code which is clear to you.
    */
-  protected OperationResult(String name, int intValue) {
+  protected OperationResult(final String name, final int intValue) {
     this.name = name;
     this.intValue = intValue;
   }

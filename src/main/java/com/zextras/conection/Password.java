@@ -14,7 +14,7 @@ public class Password {
    *
    * @param password string value.
    */
-  public Password(String password) {
+  public Password(final String password) {
     if (password == null) {
       throw new NullPointerException("Password cannot be null.");
     } else {
@@ -27,7 +27,7 @@ public class Password {
    *
    * @param password byte array value.
    */
-  public Password(byte[] password) {
+  public Password(final byte[] password) {
     if (password == null) {
       throw new NullPointerException("Password cannot be null.");
     } else {

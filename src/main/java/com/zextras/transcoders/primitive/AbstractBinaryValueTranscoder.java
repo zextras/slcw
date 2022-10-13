@@ -16,7 +16,7 @@ public abstract class AbstractBinaryValueTranscoder<T> implements ValueTranscode
    * @param value string that you want to get a byte array  value from.
    * @return a byte array - the result of transcoding operation.
    */
-  public T decodeStringValue(String value) {
+  public T decodeStringValue(final String value) {
     return this.decodeBinaryValue(TranscoderUtils.utf8Encode(value));
   }
 }

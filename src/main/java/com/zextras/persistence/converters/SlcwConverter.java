@@ -26,11 +26,11 @@ public class SlcwConverter {
    * @param entry a representation of a record in the structure.
    * @return list of attributes that can be stored.
    */
-  public static List<Attribute> convertFieldsToAttributes(SlcwEntry entry) {
+  public static List<Attribute> convertFieldsToAttributes(final SlcwEntry entry) {
     return entry.getFields().entrySet().stream()
         .map(field -> {
-          var key = field.getKey();
-          var value = field.getValue().getPropertyValue();
+          final var key = field.getKey();
+          final var value = field.getValue().getPropertyValue();
 
           if (field.getValue().isBinary()) {
             return new Attribute(key, (byte[]) value);
@@ -48,11 +48,11 @@ public class SlcwConverter {
    * @param entry a representation of a record in the structure.
    * @return list of modifications that can be stored.
    */
-  public static List<Modification> convertFieldsToModifications(SlcwEntry entry) {
+  public static List<Modification> convertFieldsToModifications(final SlcwEntry entry) {
     return entry.getFields().entrySet().stream()
         .map(field -> {
-          var key = field.getKey();
-          var value = field.getValue().getPropertyValue();
+          final var key = field.getKey();
+          final var value = field.getValue().getPropertyValue();
 
           if (field.getValue().isBinary()) {
             return new Modification(ModificationType.REPLACE, key, (byte[]) value);

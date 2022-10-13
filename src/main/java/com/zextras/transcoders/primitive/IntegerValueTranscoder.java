@@ -8,7 +8,7 @@ public class IntegerValueTranscoder extends AbstractPrimitiveValueTranscoder<Int
   public IntegerValueTranscoder() {
   }
 
-  public IntegerValueTranscoder(boolean b) {
+  public IntegerValueTranscoder(final boolean b) {
     this.setPrimitive(b);
   }
 
@@ -18,7 +18,7 @@ public class IntegerValueTranscoder extends AbstractPrimitiveValueTranscoder<Int
    * @param value string that you want to get an integer value from.
    * @return an integer object - the result of transcoding operation.
    */
-  public Integer decodeStringValue(String value) {
+  public Integer decodeStringValue(final String value) {
     return Integer.valueOf(value);
   }
 

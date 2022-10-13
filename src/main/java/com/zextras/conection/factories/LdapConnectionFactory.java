@@ -12,7 +12,7 @@ public class LdapConnectionFactory extends AbstractConnectionFactory<LDAPConnect
 
   private final LdapConnectionConfig config;
 
-  public LdapConnectionFactory(LdapConnectionConfig config) {
+  public LdapConnectionFactory(final LdapConnectionConfig config) {
     this.config = config;
   }
 
@@ -32,7 +32,7 @@ public class LdapConnectionFactory extends AbstractConnectionFactory<LDAPConnect
           config.getPort(),
           config.getBindDn(),
           config.getPassword());
-    } catch (LDAPException e) {
+    } catch (final LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
     }
   }

@@ -6,13 +6,13 @@ import com.zextras.persistence.annotations.Table;
 @Table(property = "ou", name = "tickets")
 public class Ticket {
   @Id
-  Long id;
+  private Long id;
 
   public Long getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(final Long id) {
     this.id = id;
   }
 }

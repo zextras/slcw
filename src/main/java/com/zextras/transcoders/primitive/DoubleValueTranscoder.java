@@ -8,7 +8,7 @@ public class DoubleValueTranscoder extends AbstractPrimitiveValueTranscoder<Doub
   public DoubleValueTranscoder() {
   }
 
-  public DoubleValueTranscoder(boolean b) {
+  public DoubleValueTranscoder(final boolean b) {
     this.setPrimitive(b);
   }
 
@@ -18,7 +18,7 @@ public class DoubleValueTranscoder extends AbstractPrimitiveValueTranscoder<Doub
    * @param value string that you want to get a double value from.
    * @return a double object - the result of transcoding operation.
    */
-  public Double decodeStringValue(String value) {
+  public Double decodeStringValue(final String value) {
     return Double.valueOf(value);
   }
 

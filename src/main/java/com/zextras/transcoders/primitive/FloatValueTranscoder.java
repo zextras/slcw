@@ -8,7 +8,7 @@ public class FloatValueTranscoder extends AbstractPrimitiveValueTranscoder<Float
   public FloatValueTranscoder() {
   }
 
-  public FloatValueTranscoder(boolean b) {
+  public FloatValueTranscoder(final boolean b) {
     this.setPrimitive(b);
   }
 
@@ -18,7 +18,7 @@ public class FloatValueTranscoder extends AbstractPrimitiveValueTranscoder<Float
    * @param value string that you want to get a float value from.
    * @return a float object - the result of transcoding operation.
    */
-  public Float decodeStringValue(String value) {
+  public Float decodeStringValue(final String value) {
     return Float.valueOf(value);
   }
 

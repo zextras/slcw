@@ -5,7 +5,7 @@ package com.zextras.persistence;
  */
 public class SlcwException extends RuntimeException {
 
-  public SlcwException(String message) {
+  public SlcwException(final String message) {
     super(message);
   }
 }

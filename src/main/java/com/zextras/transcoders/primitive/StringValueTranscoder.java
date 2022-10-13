@@ -14,7 +14,7 @@ public class StringValueTranscoder extends AbstractStringValueTranscoder<String>
    * @param value string.
    * @return a given value.
    */
-  public String decodeStringValue(String value) {
+  public String decodeStringValue(final String value) {
     return value;
   }
 

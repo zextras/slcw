@@ -23,7 +23,7 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
    */
 
   @Override
-  public <T> void map(T object, SlcwEntry entry) {
+  public <T> void map(final T object, final SlcwEntry entry) {
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
       throw new SlcwException("Class should be mark with @Entity annotation.");
     }
@@ -32,23 +32,23 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
       throw new SlcwException("Class should be mark with @Table annotation.");
     }
 
-    var mapEntry = entry.getFields();
+    final var mapEntry = entry.getFields();
 
-    var declaredFields = object.getClass().getDeclaredFields();
+    final var declaredFields = object.getClass().getDeclaredFields();
     Arrays.stream(declaredFields)
         .forEach(
             field -> {
               field.setAccessible(true);
               if (field.isAnnotationPresent(Id.class)) {
-                var annotationProperty = field.getAnnotation(Id.class);
-                var key = annotationProperty.name();
-                String value;
+                final var annotationProperty = field.getAnnotation(Id.class);
+                final var key = annotationProperty.name();
+                final String value;
                 try {
                   value = String.valueOf(field.get(object));
-                } catch (IllegalAccessException e) {
+                } catch (final IllegalAccessException e) {
                   throw new SlcwException(e.getMessage());
                 }
-                SlcwProperty id = entry.getId();
+                final SlcwProperty id = entry.getId();
                 id.setPropertyName(field.getName());
                 if (id.getPropertyValue() == null) {
                   id.setPropertyValue(value);
@@ -56,24 +56,24 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
                 entry.setFilter(new Filter(key + "=" + id.getPropertyValue()));
                 mapEntry.put(key, id);
               } else if (field.isAnnotationPresent(ObjectClass.class)) {
-                var annotationProperty = field.getAnnotation(ObjectClass.class);
-                var key = annotationProperty.name();
-                Object value;
+                final var annotationProperty = field.getAnnotation(ObjectClass.class);
+                final var key = annotationProperty.name();
+                final Object value;
                 try {
                   value = (field.get(object));
-                } catch (IllegalAccessException e) {
+                } catch (final IllegalAccessException e) {
                   throw new SlcwException(e.getMessage());
                 }
                 mapEntry.put(key, new SlcwProperty(key, value));
               } else if (field.isAnnotationPresent(
                   com.zextras.persistence.annotations.Column.class)) {
-                var annotationProperty = field.getAnnotation(Column.class);
-                var key = annotationProperty.name();
-                boolean binary = annotationProperty.binary();
-                Object value;
+                final var annotationProperty = field.getAnnotation(Column.class);
+                final var key = annotationProperty.name();
+                final boolean binary = annotationProperty.binary();
+                final Object value;
                 try {
                   value = field.get(object);
-                } catch (IllegalAccessException e) {
+                } catch (final IllegalAccessException e) {
                   throw new SlcwException(e.getMessage());
                 }
                 mapEntry.put(key, new SlcwProperty(field.getName(), value, binary));
@@ -96,7 +96,7 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
    * @param <T>    is a conventional letter that stands for "Type".
    */
   @Override
-  public <T> void map(SlcwEntry entry, T object) {
+  public <T> void map(final SlcwEntry entry, final T object) {
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
       throw new SlcwException("Class should be mark with @Entity annotation.");
     }
@@ -105,14 +105,14 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
         .getAttributes()
         .forEach(
             attribute -> {
-              Attribute attribute0 = (Attribute) attribute;
-              var field = entry.getFields().get(attribute0.getName());
+              final Attribute attribute0 = (Attribute) attribute;
+              final var field = entry.getFields().get(attribute0.getName());
               if (field != null) {
-                var fieldName = field.getPropertyName();
-                java.lang.reflect.Field declaredField;
+                final var fieldName = field.getPropertyName();
+                final java.lang.reflect.Field declaredField;
                 try {
                   declaredField = object.getClass().getDeclaredField(fieldName);
-                } catch (NoSuchFieldException e) {
+                } catch (final NoSuchFieldException e) {
                   throw new SlcwException(e.getMessage());
                 }
                 if (field.isBinary()) {

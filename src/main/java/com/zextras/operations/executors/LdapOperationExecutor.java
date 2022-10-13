@@ -25,7 +25,7 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
    *
    * @param connection an opened LDAP connection by which executor would interact with LDAP server.
    */
-  public LdapOperationExecutor(LDAPConnection connection) {
+  public LdapOperationExecutor(final LDAPConnection connection) {
     this.connection = connection;
   }
 
@@ -35,14 +35,14 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
    * @param entry a representation of an object and a future corresponding record in the structure.
    * @return a result of the operation.
    */
-  public LdapOperationResult executeAddOperation(SlcwEntry entry) {
-    Collection<Attribute> attributes = (Collection<Attribute>) entry.getAttributes();
+  public LdapOperationResult executeAddOperation(final SlcwEntry entry) {
+    final Collection<Attribute> attributes = (Collection<Attribute>) entry.getAttributes();
     try {
-      LDAPResult result = connection.add(entry.getFilter().getFilter() + "," + entry.getDn(),
+      final LDAPResult result = connection.add(entry.getFilter().getFilter() + "," + entry.getDn(),
           attributes);
       return new LdapOperationResult(result.getResultCode().getName(),
           result.getResultCode().intValue());
-    } catch (LDAPException e) {
+    } catch (final LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
     }
   }
@@ -53,14 +53,15 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
    * @param entry a representation of an object and a future corresponding record in the structure.
    * @return a result of the operation.
    */
-  public LdapOperationResult executeUpdateOperation(SlcwEntry entry) {
-    List<Modification> modifications = (List<Modification>) entry.getAttributes();
+  public LdapOperationResult executeUpdateOperation(final SlcwEntry entry) {
+    final List<Modification> modifications = (List<Modification>) entry.getAttributes();
     try {
-      LDAPResult result = connection.modify(entry.getFilter().getFilter() + "," + entry.getDn(),
+      final LDAPResult result = connection.modify(
+          entry.getFilter().getFilter() + "," + entry.getDn(),
           modifications);
       return new LdapOperationResult(result.getResultCode().getName(),
           result.getResultCode().intValue());
-    } catch (LDAPException e) {
+    } catch (final LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
     }
   }
@@ -71,12 +72,13 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
    * @param entry a representation of an object and a future corresponding record in the structure.
    * @return a result of the operation.
    */
-  public LdapOperationResult executeDeleteOperation(SlcwEntry entry) {
+  public LdapOperationResult executeDeleteOperation(final SlcwEntry entry) {
     try {
-      LDAPResult result = connection.delete(entry.getFilter().getFilter() + "," + entry.getDn());
+      final LDAPResult result = connection.delete(
+          entry.getFilter().getFilter() + "," + entry.getDn());
       return new LdapOperationResult(result.getResultCode().getName(),
           result.getResultCode().intValue());
-    } catch (LDAPException e) {
+    } catch (final LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
     }
   }
@@ -87,9 +89,9 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
    * @param entry a representation of an object and a future corresponding record in the structure.
    * @return a result of the operation.
    */
-  public LdapOperationResult executeGetOperation(SlcwEntry entry) {
-    var result = search(entry.getDn(), SearchScope.ONE, entry.getFilter().getFilter());
-    var searchResultEntries = result.getSearchEntries();
+  public LdapOperationResult executeGetOperation(final SlcwEntry entry) {
+    final var result = search(entry.getDn(), SearchScope.ONE, entry.getFilter().getFilter());
+    final var searchResultEntries = result.getSearchEntries();
     if (searchResultEntries.isEmpty()) {
       throw new SlcwException(
           String.format("Object %s not found.", entry.getId().getPropertyValue()));
@@ -105,16 +107,17 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
    * @return a number of matching entries.
    * @see #search(Filter).
    */
-  public LdapOperationResult executeCountOperation(Filter filter) {
-    var result = search(filter);
+  public LdapOperationResult executeCountOperation(final Filter filter) {
+    final var result = search(filter);
     return new LdapOperationResult("Success", 0, result);
   }
 
-  private SearchResult search(String baseDN, SearchScope searchScope, String filter) {
-    SearchResult searchResult;
+  private SearchResult search(final String baseDN, final SearchScope searchScope,
+      final String filter) {
+    final SearchResult searchResult;
     try {
       searchResult = connection.search(baseDN, searchScope, filter);
-    } catch (LDAPSearchException e) {
+    } catch (final LDAPSearchException e) {
       throw new SlcwException(e.getExceptionMessage());
     }
     return searchResult;
@@ -138,14 +141,14 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
    * contact your directory administrator to determine if the option is available.
    */
 
-  private long search(Filter filter) {
+  private long search(final Filter filter) {
     long numSearches = 0;
     long totalEntriesReturned = 0;
-    SearchRequest searchRequest;
+    final SearchRequest searchRequest;
     try {
       searchRequest = new SearchRequest(filter.getDn(), filter.getSearchScope(),
           filter.getFilter(), "1.1");
-    } catch (LDAPException e) {
+    } catch (final LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
     }
 
@@ -153,10 +156,10 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
     while (true) {
       searchRequest.setControls(
           new SimplePagedResultsControl(500, resumeCookie));
-      SearchResult searchResult;
+      final SearchResult searchResult;
       try {
         searchResult = connection.search(searchRequest);
-      } catch (LDAPSearchException e) {
+      } catch (final LDAPSearchException e) {
         throw new SlcwException(e.getExceptionMessage());
       }
       numSearches++;
@@ -165,10 +168,10 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
       LDAPTestUtils.assertHasControl(searchResult,
           SimplePagedResultsControl.PAGED_RESULTS_OID);
 
-      SimplePagedResultsControl responseControl;
+      final SimplePagedResultsControl responseControl;
       try {
         responseControl = SimplePagedResultsControl.get(searchResult);
-      } catch (LDAPException e) {
+      } catch (final LDAPException e) {
         throw new SlcwException(e.getExceptionMessage());
       }
       if (responseControl.moreResultsToReturn()) {

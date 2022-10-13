@@ -38,7 +38,7 @@ public class SlcwClient {
    * @param connection an opened connection to the server.
    * @param baseDn     the starting point on the server.
    */
-  public SlcwClient(LDAPConnection connection, String baseDn) {
+  public SlcwClient(final LDAPConnection connection, final String baseDn) {
     this.baseDn = baseDn;
     this.connection = connection;
   }
@@ -48,7 +48,7 @@ public class SlcwClient {
    *
    * @param factory {@link LdapConnectionFactory}.
    */
-  public void initialize(LdapConnectionFactory factory, String baseDn) {
+  public void initialize(final LdapConnectionFactory factory, final String baseDn) {
     this.baseDn = baseDn;
     this.connection = factory.openConnection();
   }
@@ -60,12 +60,12 @@ public class SlcwClient {
    * @param <T>    is a conventional letter that stands for "Type".
    * @return a result of an adding operation. (ex. "0 (success)").
    */
-  public <T> OperationResult add(T object) {
-    SlcwEntry entry = new SlcwEntry(baseDn);
+  public <T> OperationResult add(final T object) {
+    final SlcwEntry entry = new SlcwEntry(baseDn);
     mapper.map(object, entry);
     entry.setAttributes(SlcwConverter.convertFieldsToAttributes(entry));
 
-    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    final LdapOperationExecutor executor = new LdapOperationExecutor(connection);
     return executor.executeAddOperation(entry);
   }
 
@@ -76,12 +76,12 @@ public class SlcwClient {
    * @param <T>    is a conventional letter that stands for "Type".
    * @return a result of an adding operation. (ex. "0 (success)").
    */
-  public <T> OperationResult update(T object) {
-    SlcwEntry entry = new SlcwEntry(baseDn);
+  public <T> OperationResult update(final T object) {
+    final SlcwEntry entry = new SlcwEntry(baseDn);
     mapper.map(object, entry);
     entry.setAttributes(SlcwConverter.convertFieldsToModifications(entry));
 
-    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    final LdapOperationExecutor executor = new LdapOperationExecutor(connection);
     return executor.executeUpdateOperation(entry);
   }
 
@@ -92,11 +92,11 @@ public class SlcwClient {
    * @param <T>    is a conventional letter that stands for "Type".
    * @return a result of an adding operation. (ex. "0 (success)").
    */
-  public <T> OperationResult delete(T object) {
-    SlcwEntry entry = new SlcwEntry(baseDn);
+  public <T> OperationResult delete(final T object) {
+    final SlcwEntry entry = new SlcwEntry(baseDn);
     mapper.map(object, entry);
 
-    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    final LdapOperationExecutor executor = new LdapOperationExecutor(connection);
     return executor.executeDeleteOperation(entry);
   }
 
@@ -110,14 +110,14 @@ public class SlcwClient {
    * @param <T>   is a conventional letter that stands for "Type".
    * @return an object of the given class.
    */
-  public <T> T getById(String id, Class<T> clazz) {
-    T object = ObjectFactory.newObject(clazz);
-    SlcwEntry entry = new SlcwEntry(baseDn);
+  public <T> T getById(final String id, final Class<T> clazz) {
+    final T object = ObjectFactory.newObject(clazz);
+    final SlcwEntry entry = new SlcwEntry(baseDn);
     entry.getId().setPropertyValue(id);
     mapper.map(object, entry);
 
-    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
-    LdapOperationResult result = executor.executeGetOperation(entry);
+    final LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    final LdapOperationResult result = executor.executeGetOperation(entry);
     entry.setAttributes(result.getEntries().get(0).getAttributes());
 
     mapper.map(entry, object);
@@ -130,15 +130,15 @@ public class SlcwClient {
    * @param filter {@link Filter}.
    * @return number of matching entries.
    */
-  public long countBy(Filter filter) {
+  public long countBy(final Filter filter) {
     if (!(filter.getDn() == null) && !Objects.equals(filter.getDn(), baseDn)) {
       filter.setDn(filter.getDn() + "," + baseDn);
     } else {
       filter.setDn(baseDn);
     }
 
-    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
-    LdapOperationResult result = executor.executeCountOperation(filter);
+    final LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    final LdapOperationResult result = executor.executeCountOperation(filter);
     return result.getEntriesReturned();
   }
 }

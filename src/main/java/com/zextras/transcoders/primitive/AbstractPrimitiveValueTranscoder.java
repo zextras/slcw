@@ -14,7 +14,7 @@ public abstract class AbstractPrimitiveValueTranscoder<T> extends AbstractString
     return this.primitive;
   }
 
-  public void setPrimitive(boolean b) {
+  public void setPrimitive(final boolean b) {
     this.primitive = b;
   }
 }

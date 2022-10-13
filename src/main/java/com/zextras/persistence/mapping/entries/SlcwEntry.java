@@ -18,27 +18,27 @@ public class SlcwEntry extends Entry {
   private Map<String, SlcwProperty> fields = new HashMap<>();
   private Collection<?> attributes;
 
-  public SlcwEntry(String baseDn) {
+  public SlcwEntry(final String baseDn) {
     this.baseDn = baseDn;
   }
 
-  public void setId(SlcwProperty id) {
+  public void setId(final SlcwProperty id) {
     this.id = id;
   }
 
-  public void setFields(Map<String, SlcwProperty> fields) {
+  public void setFields(final Map<String, SlcwProperty> fields) {
     this.fields = fields;
   }
 
-  public void setDn(String dn) {
+  public void setDn(final String dn) {
     this.dn = dn;
   }
 
-  public void setAttributes(Collection<?> attributes) {
+  public void setAttributes(final Collection<?> attributes) {
     this.attributes = attributes;
   }
 
-  public void setFilter(Filter filter) {
+  public void setFilter(final Filter filter) {
     this.filter = filter;
   }
 

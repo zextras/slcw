@@ -14,7 +14,7 @@ public class CharArrayValueTranscoder extends AbstractStringValueTranscoder<char
    * @param value string that you want to get a char array value from.
    * @return char array - the result of transcoding operation.
    */
-  public char[] decodeStringValue(String value) {
+  public char[] decodeStringValue(final String value) {
     return value.toCharArray();
   }
 

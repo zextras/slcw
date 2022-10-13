@@ -15,7 +15,7 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder 
    *
    * @param transcoder a transcoder with corresponding value that you wanted to use.
    */
-  public SingleValueReflectionTranscoder(ValueTranscoder<T> transcoder) {
+  public SingleValueReflectionTranscoder(final ValueTranscoder<T> transcoder) {
     this.valueTranscoder = transcoder;
   }
 
@@ -25,7 +25,7 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder 
    * @param value string that you want to get a value from.
    * @return corresponding object of transcoding operation.
    */
-  public Object decodeStringValue(String value) {
+  public Object decodeStringValue(final String value) {
     return this.valueTranscoder.decodeStringValue(value);
   }
 
@@ -44,7 +44,7 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder 
    * @param type type of class that you want to check.
    * @return true if transcoder supports given type, otherwise false.
    */
-  public boolean supports(Class<?> type) {
+  public boolean supports(final Class<?> type) {
     return this.getType().equals(type);
   }
 }

@@ -24,11 +24,11 @@ public class ReflectionUtils {
    * @param object an instance of a class that you want to modify.
    * @param value  a value that you want to have after set operation.
    */
-  public static void setField(Field field, Object object, Object value) {
+  public static void setField(final Field field, final Object object, final Object value) {
     field.setAccessible(true);
     try {
       field.set(object, value);
-    } catch (IllegalAccessException e) {
+    } catch (final IllegalAccessException e) {
       throw new SlcwException(e.getMessage());
     }
   }
@@ -41,9 +41,9 @@ public class ReflectionUtils {
    * @param object an instance of a class that you want to modify.
    * @param value  a string representation of the value that you want to have after set operation.
    */
-  public static void setStringValue(Field field, Object object, String value) {
-    var type = field.getType();
-    var transcoder = new DefaultReflectionTranscoder(type).getValueTranscoder();
+  public static void setStringValue(final Field field, final Object object, final String value) {
+    final var type = field.getType();
+    final var transcoder = new DefaultReflectionTranscoder(type).getValueTranscoder();
     setField(field, object, transcoder.decodeStringValue(value));
   }
 
@@ -54,7 +54,7 @@ public class ReflectionUtils {
    * @param object an instance of a class that you want to modify.
    * @param value  a byte array value that you want to have after set operation.
    */
-  public static void setBinaryValue(Field field, Object object, byte[] value) {
+  public static void setBinaryValue(final Field field, final Object object, final byte[] value) {
     setField(field, object, value);
   }
 }

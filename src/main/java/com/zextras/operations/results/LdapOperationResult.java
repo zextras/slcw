@@ -18,7 +18,7 @@ public class LdapOperationResult extends OperationResult {
    * @param name     plain message of an operation which is clear to you.
    * @param intValue plain operation code which is clear to you.
    */
-  public LdapOperationResult(String name, int intValue) {
+  public LdapOperationResult(final String name, final int intValue) {
     super(name, intValue);
   }
 
@@ -33,18 +33,19 @@ public class LdapOperationResult extends OperationResult {
    * @param entries  search operation matching entries.
    */
 
-  public LdapOperationResult(String name, int intValue, List<SearchResultEntry> entries) {
+  public LdapOperationResult(final String name, final int intValue,
+      final List<SearchResultEntry> entries) {
     super(name, intValue);
     this.entries = entries;
   }
 
-  public LdapOperationResult(String name, int intValue, long entriesReturned) {
+  public LdapOperationResult(final String name, final int intValue, final long entriesReturned) {
     super(name, intValue);
     this.entriesReturned = entriesReturned;
   }
 
-  public LdapOperationResult(String name, int intValue, long entriesReturned,
-      List<SearchResultEntry> entries) {
+  public LdapOperationResult(final String name, final int intValue, final long entriesReturned,
+      final List<SearchResultEntry> entries) {
     super(name, intValue);
     this.entriesReturned = entriesReturned;
     this.entries = entries;
@@ -54,7 +55,7 @@ public class LdapOperationResult extends OperationResult {
     return entries;
   }
 
-  public void setEntries(List<SearchResultEntry> entries) {
+  public void setEntries(final List<SearchResultEntry> entries) {
     this.entries = entries;
   }
 
@@ -62,7 +63,7 @@ public class LdapOperationResult extends OperationResult {
     return entriesReturned;
   }
 
-  public void setEntriesReturned(long entriesReturned) {
+  public void setEntriesReturned(final long entriesReturned) {
     this.entriesReturned = entriesReturned;
   }
 }

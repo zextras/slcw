@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 class SlcwMapperTests {
 
   private SlcwMapper mapper;
+
   @BeforeEach
   void setUp() {
     this.mapper = new SlcwMapper();
@@ -26,7 +27,8 @@ class SlcwMapperTests {
     mapper.map(user, expectedEntry);
     assertEquals(user.getObjectClass(),
         expectedEntry.getFields().get("objectClass").getPropertyValue());
-    assertEquals(user.getPhoneNumber(), expectedEntry.getFields().get("homePhone").getPropertyValue());
+    assertEquals(user.getPhoneNumber(),
+        expectedEntry.getFields().get("homePhone").getPropertyValue());
     assertEquals(user.getSurname(), expectedEntry.getFields().get("sn").getPropertyValue());
     assertEquals(user.getName(), expectedEntry.getFields().get("givenName").getPropertyValue());
     assertEquals("dc=example,dc=com", expectedEntry.getBaseDn());

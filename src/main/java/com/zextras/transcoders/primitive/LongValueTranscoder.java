@@ -8,7 +8,7 @@ public class LongValueTranscoder extends AbstractPrimitiveValueTranscoder<Long> 
   public LongValueTranscoder() {
   }
 
-  public LongValueTranscoder(boolean b) {
+  public LongValueTranscoder(final boolean b) {
     this.setPrimitive(b);
   }
 
@@ -18,7 +18,7 @@ public class LongValueTranscoder extends AbstractPrimitiveValueTranscoder<Long> 
    * @param value string that you want to get a long value from.
    * @return a long object - the result of transcoding operation.
    */
-  public Long decodeStringValue(String value) {
+  public Long decodeStringValue(final String value) {
     return Long.valueOf(value);
   }
 
