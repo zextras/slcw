@@ -131,7 +131,7 @@ public class SlcwClient {
    * @return number of matching entries.
    */
   public long countBy(final Filter filter) {
-    if (!(filter.getDn() == null) && !Objects.equals(filter.getDn(), baseDn)) {
+    if (filter.getDn() != null && !Objects.equals(filter.getDn(), baseDn)) {
       filter.setDn(filter.getDn() + "," + baseDn);
     } else {
       filter.setDn(baseDn);
