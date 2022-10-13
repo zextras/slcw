@@ -1,6 +1,7 @@
 package com.zextras.conection;
 
 import com.zextras.utils.TranscoderUtils;
+import java.util.Objects;
 
 /**
  * A class is used to store password information.
@@ -15,11 +16,8 @@ public class Password {
    * @param password string value.
    */
   public Password(final String password) {
-    if (password == null) {
-      throw new NullPointerException("Password cannot be null.");
-    } else {
-      this.bytes = TranscoderUtils.utf8Encode(password, false);
-    }
+    Objects.requireNonNull(password, "Password must not be null.");
+    this.bytes = TranscoderUtils.utf8Encode(password, false);
   }
 
   /**
@@ -28,11 +26,8 @@ public class Password {
    * @param password byte array value.
    */
   public Password(final byte[] password) {
-    if (password == null) {
-      throw new NullPointerException("Password cannot be null.");
-    } else {
-      this.bytes = password;
-    }
+    Objects.requireNonNull(password, "Password must not be null.");
+    this.bytes = password;
   }
 
   public byte[] getBytes() {
