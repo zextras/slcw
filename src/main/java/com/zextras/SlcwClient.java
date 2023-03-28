@@ -5,6 +5,7 @@ import com.unboundid.ldap.sdk.LDAPConnectionPool;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.LDAPResult;
 import com.unboundid.ldap.sdk.LDAPSearchException;
+import com.unboundid.ldap.sdk.SearchRequest;
 import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchScope;
 import com.zextras.operations.executors.OperationExecutor;
@@ -99,7 +100,8 @@ public class SlcwClient implements OperationExecutor {
   @Override
   public <T extends SlcwBean> OperationResult<T> search(String baseDn, String filter) {
     try {
-      LDAPResult result = ldapConnectionPool.search(baseDn, SearchScope.BASE, filter);
+      SearchRequest searchRequest = new SearchRequest(baseDn, SearchScope.BASE, filter);
+      final SearchResult result = ldapConnectionPool.search(searchRequest);
       return new OperationResult<T>(result.getResultCode().getName(),
           result.getResultCode().intValue(), new ArrayList<>());
     } catch (LDAPException e) {

@@ -27,8 +27,8 @@ public class SlcwClientIT {
     final SlcwClient client = SlcwClient.initialize(embeddedLdapRule.unsharedLdapConnection(),"dc=example,dc=com", 1);
     final String uid = UUID.randomUUID().toString();
     final User expectedUser = new User("uid=" + uid + ", dc=example,dc=com", "Name", "Surname", 6785949);
-    client.add(expectedUser);
-    final OperationResult<SlcwBean> actualUser = client.search("Name Surname", "");
+    final OperationResult<User> userOperationResult = client.add(expectedUser);
+    final OperationResult<SlcwBean> actualUser = client.search(expectedUser.getDn(), Filter.createEqualityFilter("objectClass", "person").toString());
     assertEquals(expectedUser, actualUser.getData().get(0));
   }
 

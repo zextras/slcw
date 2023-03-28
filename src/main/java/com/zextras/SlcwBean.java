@@ -2,6 +2,8 @@ package com.zextras;
 
 //todo fix when implemented
 
+import com.zextras.operations.executors.OperationExecutor;
+import com.zextras.operations.results.OperationResult;
 import com.zextras.persistence.annotations.Table;
 import java.util.Objects;
 
@@ -12,8 +14,13 @@ import java.util.Objects;
 public abstract class SlcwBean {
 
   private final String dn;
+  private boolean isCreated = false;
 
   protected SlcwBean(String dn) {
+    this.dn = dn;
+  }
+
+  protected SlcwBean(String dn, OperationExecutor operationExecutor) {
     this.dn = dn;
   }
 
