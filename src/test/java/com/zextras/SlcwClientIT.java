@@ -7,6 +7,7 @@ import com.unboundid.ldap.sdk.*;
 import com.zextras.persistence.SlcwException;
 import com.zextras.operations.results.OperationResult;
 import com.zextras.slcwBeans.User;
+import java.util.UUID;
 import org.junit.Rule;
 import org.junit.Test;
 import org.zapodot.junit.ldap.EmbeddedLdapRule;
@@ -24,24 +25,27 @@ public class SlcwClientIT {
   @Test
   public void shouldGetById() throws LDAPException {
     final SlcwClient client = SlcwClient.initialize(embeddedLdapRule.unsharedLdapConnection(),"dc=example,dc=com", 1);
-    final User expectedUser = new User("inetOrgPerson", "Name", "Surname", 6785949);
+    final String uid = UUID.randomUUID().toString();
+    final User expectedUser = new User("uid=" + uid + ", dc=example,dc=com", "Name", "Surname", 6785949);
     client.add(expectedUser);
-    final User actualUser = client.search("Name Surname", "").get(0);
-    assertEquals(expectedUser, actualUser);
+    final OperationResult<SlcwBean> actualUser = client.search("Name Surname", "");
+    assertEquals(expectedUser, actualUser.getData().get(0));
   }
 
   @Test
   public void shouldReturnSuccessOnAddOperation() throws LDAPException {
     final SlcwClient client = SlcwClient.initialize(embeddedLdapRule.unsharedLdapConnection(),"dc=example,dc=com", 1);
-    final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
-    final OperationResult result = client.add(user);
+    final String uid = UUID.randomUUID().toString();
+    final User user = new User("uid=" + uid + ", dc=example,dc=com", "Name", "Surname", 6785949);
+    final OperationResult<User> result = client.add(user);
     assertEquals("0 (success)", result.toString());
   }
 
   @Test
   public void shouldReturnSuccessOnDeleteOperation() throws LDAPException {
     final SlcwClient client = SlcwClient.initialize(embeddedLdapRule.unsharedLdapConnection(),"dc=example,dc=com", 1);
-    final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
+    final String uid = UUID.randomUUID().toString();
+    final User user = new User( "uid=" + uid + ", dc=example,dc=com", "Name", "Surname", 6785949);
     client.add(user);
     final OperationResult<User> result = client.search(user.getId(), "");
     assertEquals(user, result.getData().get(0));
@@ -55,17 +59,19 @@ public class SlcwClientIT {
   @Test
   public void shouldReturnSuccessOnUpdateOperation() throws LDAPException {
     final SlcwClient client = SlcwClient.initialize(embeddedLdapRule.unsharedLdapConnection(),"dc=example,dc=com", 1);
-    final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
+    final String uid = UUID.randomUUID().toString();
+    final User user = new User("uid=" + uid + ", dc=example,dc=com", "Name", "Surname", 6785949);
 
     client.add(user);
-    final User presentUser = ((OperationResult<User>) client.search(user.getId(), "")).getData().get(0);
+    final OperationResult<User> operationResult = client.search(user.getId(), "");
+    final User presentUser = operationResult.getData().get(0);
     assertEquals(user.getPhoneNumber(), presentUser.getPhoneNumber());
 
     user.setPhoneNumber(11111111);
     final OperationResult<User> result = client.update(user);
     assertEquals("0 (success)", result.toString());
-
-    final User modifiedUser = client.search(user.getId(), User.class).get(0);
+    final OperationResult<User> search2 = client.search(user.getId(), "");
+    final User modifiedUser = search2.getData().get(0);
     assertEquals(user.getPhoneNumber(), modifiedUser.getPhoneNumber());
   }
 }
