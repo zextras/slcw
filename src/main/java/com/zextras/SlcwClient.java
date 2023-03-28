@@ -1,37 +1,32 @@
 package com.zextras;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPConnectionPool;
 import com.unboundid.ldap.sdk.LDAPException;
-import com.zextras.operations.executors.LdapOperationExecutor;
+import com.unboundid.ldap.sdk.LDAPResult;
+import com.unboundid.ldap.sdk.LDAPSearchException;
+import com.unboundid.ldap.sdk.SearchResult;
+import com.unboundid.ldap.sdk.SearchScope;
 import com.zextras.operations.executors.OperationExecutor;
 import com.zextras.operations.results.OperationResult;
 import com.zextras.persistence.SlcwException;
-import java.util.List;
+import com.zextras.persistence.converters.SlcwConverter;
+import java.util.ArrayList;
 
 /**
- * Main entrypoint for the library.
+ * Manages access to LDAP thorugh connections and operations.
  *
  * @author Yuliya Aheeva
  * @since 1.0.0
  */
-public class SlcwClient {
+public class SlcwClient implements OperationExecutor {
 
-  private final OperationExecutor operationExecutor;
+  private final LDAPConnectionPool ldapConnectionPool;
   private final String baseDn;
 
-  /**
-   * Creates a client with an opened connection.
-   *
-   * @param operationExecutor an operation executor
-   * @param baseDn     the starting point on the server.
-   */
-  public SlcwClient(OperationExecutor operationExecutor, String baseDn) {
+  public SlcwClient(LDAPConnectionPool ldapConnectionPool, String baseDn) {
+    this.ldapConnectionPool = ldapConnectionPool;
     this.baseDn = baseDn;
-    this.operationExecutor = operationExecutor;
-  }
-
-  public SlcwClient(LDAPConnection ldapConnection, String baseDn) {
-    this(new LdapOperationExecutor(ldapConnection), baseDn);
   }
 
   /**
@@ -43,58 +38,73 @@ public class SlcwClient {
    * @param password a secret word or phrase that allows access to the server.
    * @param baseDn   the starting point on the server.
    */
-  public static SlcwClient initialize(String host, int port, String bindDN, String password, String baseDn) {
+  public static SlcwClient initialize(String host, int port, String bindDN, String password, String baseDn, Integer numConnections) throws LDAPException{
+    return new SlcwClient(new LDAPConnectionPool(new LDAPConnection(host, port, bindDN, password), numConnections), baseDn);
+  }
+
+  /**
+   * @param ldapConnection an LDAP connection
+   * @param baseDn base dn to start from when executing operations
+   * @param numConnections number of connections
+   * @return
+   * @throws LDAPException
+   */
+  public static SlcwClient initialize(LDAPConnection ldapConnection, String baseDn, Integer numConnections) throws LDAPException{
+    return new SlcwClient(new LDAPConnectionPool(ldapConnection, numConnections), baseDn);
+  }
+
+  private SearchResult search(String baseDN, SearchScope searchScope, String filter) {
+    SearchResult searchResult;
     try {
-      return new SlcwClient(new LdapOperationExecutor(new LDAPConnection(host, port, bindDN, password)), baseDn);
+      searchResult = ldapConnectionPool.search(baseDN, searchScope, filter);
+    } catch (LDAPSearchException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    }
+    return searchResult;
+  }
+
+  @Override
+  public <T extends SlcwBean> OperationResult<T> add(T bean) {
+    try {
+      LDAPResult result = ldapConnectionPool.add(bean.getDn(), SlcwConverter.convertFieldsToAttributes(bean));
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<T>());
     } catch (LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
     }
   }
 
-  /**
-   * Gets an object from a record stored in the structure, otherwise throws an exception.
-   *
-   * @param filter a generic filter.
-   * @param <T>   is a conventional letter that stands for "Type".
-   * @return an object of the given class.
-   */
-  public <T  extends SlcwBean> List<T> search(String filter, Class<T> clazz) {
-    final OperationResult<T> slcwBeanOperationResult = operationExecutor.executeSearchOperation(
-        baseDn, filter);
-    return slcwBeanOperationResult.getData();
+  @Override
+  public <T extends SlcwBean> OperationResult<T> update(T bean) {
+    try {
+      LDAPResult result = ldapConnectionPool.modify(bean.getDn(), SlcwConverter.convertFieldsToModifications(bean));
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<>());
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    }
   }
 
-  /**
-   * Creates a new entry (record) in the structure.*
-   *
-   * @param object an object that you want to save in the structure.
-   * @param <T>    is a conventional letter that stands for "Type".
-   * @return a result of an adding operation. (ex. "0 (success)").
-   */
-  public <T extends SlcwBean> OperationResult<T> add(T object) {
-    return operationExecutor.executeAddOperation(object);
+  @Override
+  public <T extends SlcwBean> OperationResult<T> delete(T bean) {
+    try {
+      LDAPResult result = ldapConnectionPool.delete(bean.getDn());
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<>());
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    }
   }
 
-  /**
-   * Alter the content of an entry (record) in the structure.
-   *
-   * @param object an object that you want to modify in the structure.
-   * @param <T>    is a conventional letter that stands for "Type".
-   * @return a result of an adding operation. (ex. "0 (success)").
-   */
-  public <T extends SlcwBean> OperationResult<T> update(T object) {
-    return operationExecutor.executeUpdateOperation(object);
-  }
-
-  /**
-   * Remove an entry (record) from the structure.
-   *
-   * @param object an object that you want to delete from the structure.
-   * @param <T>    is a conventional letter that stands for "Type".
-   * @return a result of an adding operation. (ex. "0 (success)").
-   */
-  public <T extends SlcwBean> OperationResult<T> delete(T object) {
-    return operationExecutor.executeDeleteOperation(object);
+  @Override
+  public <T extends SlcwBean> OperationResult<T> search(String baseDn, String filter) {
+    try {
+      LDAPResult result = ldapConnectionPool.search(baseDn, SearchScope.BASE, filter);
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<>());
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    }
   }
 
 }

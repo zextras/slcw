@@ -21,12 +21,7 @@ public class User extends SlcwBean {
   private Long phoneNumber;
   private int anotherField;
 
-  public User(String dn) {
-    super(dn);
-  }
-
   public User(String objectClass, String name, String surname, long phoneNumber) {
-    super(name + " " + surname);
     this.id = name + " " + surname;
     this.objectClass = objectClass;
     this.name = name;
