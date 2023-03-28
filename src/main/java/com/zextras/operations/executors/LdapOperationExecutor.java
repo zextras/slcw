@@ -1,20 +1,22 @@
 package com.zextras.operations.executors;
 
-import com.unboundid.ldap.sdk.*;
-import com.zextras.operations.results.LdapOperationResult;
+import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.LDAPResult;
+import com.unboundid.ldap.sdk.LDAPSearchException;
+import com.unboundid.ldap.sdk.SearchResult;
+import com.unboundid.ldap.sdk.SearchScope;
+import com.zextras.SlcwBean;
+import com.zextras.operations.results.OperationResult;
 import com.zextras.persistence.SlcwException;
-import com.zextras.persistence.mapping.entries.SlcwEntry;
-
+import com.zextras.persistence.converters.SlcwConverter;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Helper class that interacts with LDAP server and performs CRUD operations.
  */
-public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> {
+public class LdapOperationExecutor implements OperationExecutor {
 
   private final LDAPConnection connection;
 
@@ -28,70 +30,6 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
     this.connection = connection;
   }
 
-  /**
-   * Performs an add operation and returns the result of this operation.
-   *
-   * @param entry a representation of an object and a future corresponding record in the structure.
-   * @return a result of the operation.
-   */
-  public LdapOperationResult executeAddOperation(SlcwEntry entry) {
-    Collection<Attribute> attributes = (Collection<Attribute>) entry.getAttributes();
-    try {
-      LDAPResult result = connection.add(entry.getFilter() + "," + entry.getDn(), attributes);
-      return new LdapOperationResult(result.getResultCode().getName(),
-          result.getResultCode().intValue());
-    } catch (LDAPException e) {
-      throw new SlcwException(e.getExceptionMessage());
-    }
-  }
-
-  /**
-   * Performs an update operation and returns the result of this operation.
-   *
-   * @param entry a representation of an object and a future corresponding record in the structure.
-   * @return a result of the operation.
-   */
-  public LdapOperationResult executeUpdateOperation(SlcwEntry entry) {
-    List<Modification> modifications = (List<Modification>) entry.getAttributes();
-    try {
-      LDAPResult result = connection.modify(entry.getFilter() + "," + entry.getDn(), modifications);
-      return new LdapOperationResult(result.getResultCode().getName(),
-          result.getResultCode().intValue());
-    } catch (LDAPException e) {
-      throw new SlcwException(e.getExceptionMessage());
-    }
-  }
-
-  /**
-   * Performs a removal operation and returns the result of this operation.
-   *
-   * @param entry a representation of an object and a future corresponding record in the structure.
-   * @return a result of the operation.
-   */
-  public LdapOperationResult executeDeleteOperation(SlcwEntry entry) {
-    try {
-      LDAPResult result = connection.delete(entry.getFilter() + "," + entry.getDn());
-      return new LdapOperationResult(result.getResultCode().getName(),
-          result.getResultCode().intValue());
-    } catch (LDAPException e) {
-      throw new SlcwException(e.getExceptionMessage());
-    }
-  }
-
-  /**
-   * Performs a get by id operation and returns the result of this operation.
-   *
-   * @param entry a representation of an object and a future corresponding record in the structure.
-   * @return a result of the operation.
-   */
-  public LdapOperationResult executeGetOperation(SlcwEntry entry) {
-    var result = search(entry.getDn(), SearchScope.ONE, entry.getFilter());
-    var searchResultEntries = result.getSearchEntries();
-    return new LdapOperationResult(result.getResultCode().getName(),
-        result.getResultCode().intValue(),
-        Collections.singleton(searchResultEntries.get(0).getAttributes()));
-  }
-
   private SearchResult search(String baseDN, SearchScope searchScope, String filter) {
     SearchResult searchResult;
     try {
@@ -102,17 +40,47 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
     return searchResult;
   }
 
-  public LdapOperationResult executeGetAllOperation(SlcwEntry entry) {
-    var result = search(entry.getDn(), SearchScope.BASE, entry.getFilter());
-    var searchResultEntries = result.getSearchEntries();
-    if (searchResultEntries.isEmpty()) {
-      throw new SlcwException(
-          String.format("Object %s not found.", entry.getId().getPropertyValue()));
+  @Override
+  public <T extends SlcwBean> OperationResult<T> executeAddOperation(T bean) {
+    try {
+      LDAPResult result = connection.add(bean.getDn(), SlcwConverter.convertFieldsToAttributes(bean));
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<T>());
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
     }
-    return new LdapOperationResult(result.getResultCode().getName(),
-        result.getResultCode().intValue(),
-        searchResultEntries.stream().map(SearchResultEntry::getAttributes).collect(Collectors.toSet()));
   }
 
+  @Override
+  public <T extends SlcwBean> OperationResult<T> executeUpdateOperation(T bean) {
+    try {
+      LDAPResult result = connection.modify(bean.getDn(), SlcwConverter.convertFieldsToModifications(bean));
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<>());
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    }
+  }
 
+  @Override
+  public <T extends SlcwBean> OperationResult<T> executeDeleteOperation(T bean) {
+    try {
+      LDAPResult result = connection.delete(bean.getDn());
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<>());
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    }
+  }
+
+  @Override
+  public <T extends SlcwBean> OperationResult<T> executeSearchOperation(String baseDn, String filter) {
+    try {
+      LDAPResult result = connection.search(baseDn, SearchScope.BASE, filter);
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<>());
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    }
+  }
 }

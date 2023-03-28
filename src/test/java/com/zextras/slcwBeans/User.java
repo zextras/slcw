@@ -21,15 +21,17 @@ public class User extends SlcwBean {
   private Long phoneNumber;
   private int anotherField;
 
-  public User() {
+  public User(String dn) {
+    super(dn);
   }
 
-  public User(String objectClass, String name, String surname, long number) {
+  public User(String objectClass, String name, String surname, long phoneNumber) {
+    super(name + " " + surname);
     this.id = name + " " + surname;
     this.objectClass = objectClass;
     this.name = name;
     this.surname = surname;
-    this.phoneNumber = number;
+    this.phoneNumber = phoneNumber;
   }
 
   public void setName(String name) {
@@ -89,5 +91,10 @@ public class User extends SlcwBean {
   @Override
   public int hashCode() {
     return Objects.hash(id, objectClass, name, surname, phoneNumber, anotherField);
+  }
+
+  @Override
+  public String getDn() {
+    return id;
   }
 }

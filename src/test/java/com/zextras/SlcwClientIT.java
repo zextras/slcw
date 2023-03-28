@@ -27,7 +27,7 @@ public class SlcwClientIT {
         new SlcwClient(embeddedLdapRule.unsharedLdapConnection(), "dc=example,dc=com");
     final User expectedUser = new User("inetOrgPerson", "Name", "Surname", 6785949);
     client.add(expectedUser);
-    final User actualUser = client.getById("Name Surname", User.class);
+    final User actualUser = client.search("Name Surname", User.class).get(0);
     assertEquals(expectedUser, actualUser);
   }
 
@@ -47,13 +47,13 @@ public class SlcwClientIT {
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
     client.add(user);
 
-    final User presentUser = client.getById(user.getId(), User.class);
+    final User presentUser = client.search(user.getId(), User.class).get(0);
     assertEquals(user, presentUser);
 
     final OperationResult result = client.delete(user);
     assertEquals("0 (success)", result.toString());
 
-    assertThrows(SlcwException.class, () -> client.getById(user.getId(), User.class));
+    assertThrows(SlcwException.class, () -> client.search(user.getId(), User.class));
   }
 
   @Test
@@ -63,14 +63,14 @@ public class SlcwClientIT {
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
 
     client.add(user);
-    final User presentUser = client.getById(user.getId(), User.class);
+    final User presentUser = client.search(user.getId(), User.class).get(0);
     assertEquals(user.getPhoneNumber(), presentUser.getPhoneNumber());
 
     user.setPhoneNumber(11111111);
     final OperationResult result = client.update(user);
     assertEquals("0 (success)", result.toString());
 
-    final User modifiedUser = client.getById(user.getId(), User.class);
+    final User modifiedUser = client.search(user.getId(), User.class).get(0);
     assertEquals(user.getPhoneNumber(), modifiedUser.getPhoneNumber());
   }
 }

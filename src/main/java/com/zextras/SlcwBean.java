@@ -7,4 +7,14 @@ package com.zextras;
  */
 public abstract class SlcwBean {
 
+  protected final String dn;
+
+  protected SlcwBean(String dn) {
+    this.dn = dn;
+  }
+
+  public String getDn() {
+    return this.dn;
+  };
+
 }
