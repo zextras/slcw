@@ -10,7 +10,13 @@ import com.zextras.persistence.mapping.entries.Entry;
  */
 public interface Mapper<V extends Entry> {
 
-  <T> void map(T object, V entry);
+  /**
+   * Maps a generic T to entry
+   * @param object object to map
+   * @param <T> type for object to map
+   * @return mapped object
+   */
+  <T> V map(T object);
 
-  <T> void map(V entry, T object);
+  <T> T map(V entry, Class<T> Clazz);
 }

@@ -9,6 +9,8 @@ import com.zextras.persistence.converters.SlcwConverter;
 import com.zextras.persistence.mapping.entries.SlcwEntry;
 import com.zextras.persistence.mapping.mappers.SlcwMapper;
 import com.zextras.utils.ObjectFactory;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Main entrypoint for the library.
@@ -18,17 +20,9 @@ import com.zextras.utils.ObjectFactory;
  */
 public class SlcwClient {
 
-  private LDAPConnection connection;
-  private String baseDn;
+  private final LDAPConnection connection;
+  private final String baseDn;
   private final SlcwMapper mapper = new SlcwMapper();
-
-  /**
-   * Creates a client that should be initialized with
-   * {@link #initialize(String, int, String, String, String) initialize} method.
-   */
-  public SlcwClient() {
-
-  }
 
   /**
    * Creates a client with an opened connection.
@@ -50,10 +44,9 @@ public class SlcwClient {
    * @param password a secret word or phrase that allows access to the server.
    * @param baseDn   the starting point on the server.
    */
-  public void initialize(String host, int port, String bindDN, String password, String baseDn) {
-    this.baseDn = baseDn;
+  public static SlcwClient initialize(String host, int port, String bindDN, String password, String baseDn) {
     try {
-      connection = new LDAPConnection(host, port, bindDN, password);
+      return new SlcwClient(new LDAPConnection(host, port, bindDN, password), baseDn);
     } catch (LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
     }
@@ -70,17 +63,13 @@ public class SlcwClient {
    * @return an object of the given class.
    */
   public <T> T getById(String id, Class<T> clazz) {
-    T object = ObjectFactory.newObject(clazz);
     SlcwEntry entry = new SlcwEntry(baseDn);
     entry.getId().setPropertyValue(id);
-    mapper.map(object, entry);
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
     LdapOperationResult result = executor.executeGetOperation(entry);
-    entry.setAttributes(result.getAttributes());
-
-    mapper.map(entry, object);
-    return object;
+    entry.setAttributes(result.getData());
+    return mapper.map(entry, clazz);
   }
 
   /**
@@ -91,8 +80,8 @@ public class SlcwClient {
    * @return a result of an adding operation. (ex. "0 (success)").
    */
   public <T> OperationResult add(T object) {
-    SlcwEntry entry = new SlcwEntry(baseDn);
-    mapper.map(object, entry);
+    SlcwEntry entry = mapper.map(object);
+    entry.setDn(baseDn);
     entry.setAttributes(SlcwConverter.convertFieldsToAttributes(entry));
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
@@ -107,8 +96,8 @@ public class SlcwClient {
    * @return a result of an adding operation. (ex. "0 (success)").
    */
   public <T> OperationResult update(T object) {
-    SlcwEntry entry = new SlcwEntry(baseDn);
-    mapper.map(object, entry);
+    SlcwEntry entry = mapper.map(object);
+    entry.setDn(baseDn);
     entry.setAttributes(SlcwConverter.convertFieldsToModifications(entry));
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
@@ -123,10 +112,20 @@ public class SlcwClient {
    * @return a result of an adding operation. (ex. "0 (success)").
    */
   public <T> OperationResult delete(T object) {
-    SlcwEntry entry = new SlcwEntry(baseDn);
-    mapper.map(object, entry);
+    SlcwEntry entry = mapper.map(object);
+    entry.setDn(baseDn);
 
     LdapOperationExecutor executor = new LdapOperationExecutor(connection);
     return executor.executeDeleteOperation(entry);
   }
+
+  public <T> List<T> search(Class<T> clazz) {
+    SlcwEntry entry = new SlcwEntry(baseDn);
+
+    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
+    return executor.executeGetAllOperation(entry).getData().stream().map(
+        attributes -> mapper.map(new SlcwEntry(baseDn, attributes), clazz)
+    ).collect(Collectors.toList());
+  }
+
 }

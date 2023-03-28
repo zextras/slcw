@@ -7,6 +7,7 @@ import com.zextras.persistence.mapping.SlcwProperty;
 import com.zextras.persistence.mapping.entries.SlcwEntry;
 import com.zextras.utils.PropertyBuilder;
 import com.zextras.utils.ReflectionUtils;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -20,12 +21,12 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
    * Maps an object to the representation entry in matter to perform CRUD operations.*
    *
    * @param object object of the Type - a source object that you want to map.
-   * @param entry  a destination object of mapping.
    * @param <T>    is a conventional letter that stands for "Type".
    */
 
   @Override
-  public <T> void map(T object, SlcwEntry entry) {
+  public <T> SlcwEntry map(T object) {
+    final SlcwEntry entry = new SlcwEntry("");
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
       throw new SlcwException("Class should be mark with @Entity annotation.");
     }
@@ -87,6 +88,7 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
 
     entry.setDn(builder.buildDn(entry));
     entry.setFilter(builder.buildFilter(entry));
+    return entry;
   }
 
   /**
@@ -94,11 +96,18 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
    * operation.*
    *
    * @param entry  representation entry of an object.
-   * @param object object of the Type that you want to get.
    * @param <T>    is a conventional letter that stands for "Type".
    */
   @Override
-  public <T> void map(SlcwEntry entry, T object) {
+  public <T> T map(SlcwEntry entry, Class<T> clazz) {
+    //TODO: T should not be a generic to avoid runtime surprises
+    T object;
+    try {
+      object = clazz.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
+      throw new SlcwException("");
+    }
+
     if (!object.getClass().isAnnotationPresent(Entity.class)) {
       throw new SlcwException("Class should be mark with @Entity annotation.");
     }
@@ -125,5 +134,6 @@ public class SlcwMapper implements Mapper<SlcwEntry> {
                 }
               }
             });
+    return object;
   }
 }

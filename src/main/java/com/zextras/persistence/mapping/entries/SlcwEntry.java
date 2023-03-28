@@ -1,5 +1,6 @@
 package com.zextras.persistence.mapping.entries;
 
+import com.unboundid.ldap.sdk.Attribute;
 import com.zextras.persistence.mapping.SlcwProperty;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,6 +21,11 @@ public class SlcwEntry extends Entry {
 
   public SlcwEntry(String baseDn) {
     this.baseDn = baseDn;
+  }
+
+  public SlcwEntry(String baseDn, Collection<Attribute> attributes) {
+    this(baseDn);
+    this.attributes = attributes;
   }
 
   public void setId(SlcwProperty id) {

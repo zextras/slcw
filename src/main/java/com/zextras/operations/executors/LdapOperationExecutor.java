@@ -5,8 +5,11 @@ import com.zextras.operations.results.LdapOperationResult;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.mapping.entries.SlcwEntry;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Helper class that interacts with LDAP server and performs CRUD operations.
@@ -84,12 +87,9 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
   public LdapOperationResult executeGetOperation(SlcwEntry entry) {
     var result = search(entry.getDn(), SearchScope.ONE, entry.getFilter());
     var searchResultEntries = result.getSearchEntries();
-    if (searchResultEntries.isEmpty()) {
-      throw new SlcwException(
-          String.format("Object %s not found.", entry.getId().getPropertyValue()));
-    }
     return new LdapOperationResult(result.getResultCode().getName(),
-        result.getResultCode().intValue(), searchResultEntries.get(0).getAttributes());
+        result.getResultCode().intValue(),
+        Collections.singleton(searchResultEntries.get(0).getAttributes()));
   }
 
   private SearchResult search(String baseDN, SearchScope searchScope, String filter) {
@@ -101,4 +101,18 @@ public class LdapOperationExecutor extends AbstractOperationExecutor<SlcwEntry> 
     }
     return searchResult;
   }
+
+  public LdapOperationResult executeGetAllOperation(SlcwEntry entry) {
+    var result = search(entry.getDn(), SearchScope.BASE, entry.getFilter());
+    var searchResultEntries = result.getSearchEntries();
+    if (searchResultEntries.isEmpty()) {
+      throw new SlcwException(
+          String.format("Object %s not found.", entry.getId().getPropertyValue()));
+    }
+    return new LdapOperationResult(result.getResultCode().getName(),
+        result.getResultCode().intValue(),
+        searchResultEntries.stream().map(SearchResultEntry::getAttributes).collect(Collectors.toSet()));
+  }
+
+
 }

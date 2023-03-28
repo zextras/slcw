@@ -23,7 +23,7 @@ class SlcwMapperTests {
   void shouldMapFromObject() {
     final User user = new User("inetOrgPerson", "Name", "Surname", 6785949);
     final SlcwEntry expectedEntry = new SlcwEntry("dc=example,dc=com");
-    mapper.map(user, expectedEntry);
+    mapper.map(user);
     assertEquals(user.getObjectClass(),
         expectedEntry.getFields().get("objectClass").getPropertyValue());
     assertEquals(user.getPhoneNumber(), expectedEntry.getFields().get("homePhone").getPropertyValue());
@@ -37,17 +37,15 @@ class SlcwMapperTests {
   void shouldMapFromEntry() {
     final User expectedUser = new User("inetOrgPerson", "Name", "Surname", 6785949);
     final SlcwEntry entry = new SlcwEntry("dc=example,dc=com");
-    mapper.map(expectedUser, entry);
+    mapper.map(expectedUser);
     entry.setAttributes(SlcwConverter.convertFieldsToAttributes(entry));
-    final User actualUser = new User();
-    mapper.map(entry, actualUser);
+    final User actualUser = mapper.map(entry, User.class);
     assertEquals(expectedUser, actualUser);
   }
 
   @Test
   void shouldThrowExceptionForNotEntityClass() {
     final Ticket ticket = new Ticket();
-    final SlcwEntry entry = new SlcwEntry("dc=example,dc=com");
-    assertThrows(SlcwException.class, () -> mapper.map(ticket, entry));
+    assertThrows(SlcwException.class, () -> mapper.map(ticket));
   }
 }
