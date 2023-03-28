@@ -76,9 +76,4 @@ public class User extends SlcwBean {
   public int hashCode() {
     return Objects.hash(id, name, surname, phoneNumber);
   }
-
-  @Override
-  public String getDn() {
-    return id;
-  }
 }
