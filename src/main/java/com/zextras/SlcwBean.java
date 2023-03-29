@@ -1,7 +1,5 @@
 package com.zextras;
 
-//todo fix when implemented
-
 import com.zextras.persistence.annotations.Id;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
