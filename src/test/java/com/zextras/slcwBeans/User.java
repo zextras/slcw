@@ -18,12 +18,14 @@ public class User extends SlcwBean {
   @Column(name = "homePhone")
   private Long phoneNumber;
 
-  public User(String dn, String name, String surname, long phoneNumber) {
-    super(dn);
+  public User(String name, String surname, long phoneNumber) {
     this.id = name + " " + surname;
     this.name = name;
     this.surname = surname;
     this.phoneNumber = phoneNumber;
+  }
+
+  public User() {
   }
 
   public void setName(String name) {
