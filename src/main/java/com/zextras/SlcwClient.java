@@ -11,10 +11,8 @@ import com.zextras.operations.executors.OperationExecutor;
 import com.zextras.operations.results.OperationResult;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.converters.SlcwConverter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Objects;
-import org.apache.commons.beanutils.BeanUtils;
 
 /**
  * Manages LDAP operations for a {@link SlcwBean} type.
@@ -62,7 +60,7 @@ public class SlcwClient<T extends SlcwBean> implements OperationExecutor<T> {
   public OperationResult<T> add(T bean) {
     try {
       bean.setDn(getFullDn(bean));
-      LDAPResult result = ldapConnectionPool.add(bean.getDn(), SlcwConverter.convertFieldsToAttributes(bean));
+      LDAPResult result = ldapConnectionPool.add(bean.getDn(), SlcwConverter.convertBeanToAttributes(bean));
       return new OperationResult<T>(result.getResultCode().getName(),
           result.getResultCode().intValue(), new ArrayList<T>());
     } catch (LDAPException e) {

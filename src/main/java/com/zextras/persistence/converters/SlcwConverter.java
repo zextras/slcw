@@ -9,12 +9,10 @@ import com.zextras.SlcwBean;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.annotations.Column;
 import com.zextras.persistence.annotations.Id;
-import com.zextras.persistence.annotations.ObjectClass;
 import com.zextras.persistence.annotations.Table;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -80,11 +78,12 @@ public class SlcwConverter<T> {
 
   //TODO: handle LDAP binary attributes
   /**
-   * Converts an entry to a list of attributes which this entry has.*
+   * Converts an entry to a list of attributes which this entry has.
+   * It adds also objectclass in attributes.
    *
    * @return list of attributes that can be stored.
    */
-  public static List<Attribute> convertFieldsToAttributes(SlcwBean object) {
+  public static List<Attribute> convertBeanToAttributes(SlcwBean object) {
     List<Attribute> attributes = new ArrayList<>();
     final Table table = object.getClass().getAnnotation(Table.class);
     attributes.add(new Attribute("objectclass", table.objectClass()));
