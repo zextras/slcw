@@ -4,6 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.List;
 
 /**
  * @Table annotation allows you to define the table, catalog, and schema names for your entity
@@ -14,9 +15,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Table {
 
-  String objectClass();
-
-  String name();
-
-  String property();
+  String[] objectClass();
 }

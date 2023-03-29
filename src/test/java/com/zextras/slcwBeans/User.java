@@ -6,7 +6,7 @@ import com.zextras.persistence.annotations.*;
 import java.util.Objects;
 
 @Entity
-@Table(objectClass = "inetOrgPerson", property = "ou", name = "users")
+@Table(objectClass = {"inetOrgPerson", "organizationalPerson"})
 public class User extends SlcwBean {
 
   @Id(name = "cn")

@@ -17,7 +17,7 @@ public class SlcwConverterTests {
     user.setName("name"); //givenName
     user.setSurname("surname"); //sn
     final List<Attribute> attributes = SlcwConverter.convertBeanToAttributes(user);
-    Assert.assertEquals(4, attributes.size());
+    Assert.assertEquals(5, attributes.size());
     attributes.forEach(
         attribute -> {
           switch (attribute.getName()) {
@@ -34,7 +34,7 @@ public class SlcwConverterTests {
               Assert.assertEquals("surname", attribute.getValue());
               break;
             case "objectclass":
-              Assert.assertEquals("inetOrgPerson", attribute.getValue());
+              Assert.assertEquals(new String[]{"inetOrgPerson", "organizationalPerson"}, attribute.getValues());
               break;
           }
 
