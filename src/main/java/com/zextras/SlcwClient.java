@@ -38,20 +38,9 @@ public class SlcwClient<T extends SlcwBean> implements OperationExecutor<T> {
     this.beanClazz = clazz;
   }
 
-  private SearchResult search(String baseDN, SearchScope searchScope, String filter) {
-    SearchResult searchResult;
-    try {
-      searchResult = ldapConnectionPool.search(baseDN, searchScope, filter);
-    } catch (LDAPSearchException e) {
-      throw new SlcwException(e.getExceptionMessage());
-    }
-    return searchResult;
-  }
-
   @Override
   public OperationResult<T> add(T bean) {
     try {
-      bean.setDn("uid=" + bean.getUid() + ", " + baseDn);
       LDAPResult result = ldapConnectionPool.add(bean.getDn(), SlcwConverter.convertFieldsToAttributes(bean));
       return new OperationResult<T>(result.getResultCode().getName(),
           result.getResultCode().intValue(), new ArrayList<T>());
