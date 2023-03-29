@@ -11,8 +11,10 @@ import java.util.Optional;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
- * The SlcwBean class represents an object that would be used by {@linkplain SlcwClient} in order to
- * provide CRUD operations on it.
+ * The SlcwBean class is a Data representation of an LDAP entry.
+ * Operations on it managed with {@linkplain com.zextras.operations.executors.OperationExecutor}.
+ *
+ * @author davidefrison
  */
 public abstract class SlcwBean {
 
