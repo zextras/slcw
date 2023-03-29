@@ -2,18 +2,13 @@ package com.zextras;
 
 //todo fix when implemented
 
-import com.unboundid.ldap.sdk.LDAPConnectionPool;
-import com.zextras.operations.executors.OperationExecutor;
-import com.zextras.operations.results.OperationResult;
-import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.annotations.Id;
-import com.zextras.persistence.annotations.Table;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.function.Supplier;
+import java.util.Optional;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  * The SlcwBean class represents an object that would be used by {@linkplain SlcwClient} in order to
@@ -23,21 +18,66 @@ public abstract class SlcwBean {
 
   private String dn;
 
+  /**
+   * Name of the id attribute if any. If present its value is added to make the dn.
+   */
+  private final String idAttrName;
+
+  public String getIdFieldName() {
+    return idFieldName;
+  }
+
+  /**
+   * Name of the field corresponding to id attribute
+   */
+  private final String idFieldName;
+
+  public String getIdAttrName() {
+    return idAttrName;
+  }
+
+  /**
+   * Returns the value of filed annotated with {@link Id}.
+   * Returns an empty string if value not set or no field has the annotation.
+   *
+   * @return string of id field
+   */
+  public String getIdStringValue() {
+    if (!Objects.isNull(idAttrName)) {
+      try {
+        return BeanUtils.getSimpleProperty(this, this.getIdFieldName());
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      }
+      return "";
+    }
+    return "";
+  }
+
+  public boolean hasIdAttribute() {
+    return (!(Objects.isNull(idAttrName)));
+  }
+
+  public SlcwBean() {
+    final Optional<Field> idField = Arrays.stream(this.getClass().getDeclaredFields()).filter(
+            field -> field.isAnnotationPresent(Id.class))
+        .findFirst();
+    if (idField.isPresent()) {
+      idAttrName = idField.get().getAnnotation(Id.class).name();
+      idFieldName = idField.get().getName();
+    } else {
+      idAttrName = null;
+      idFieldName = null;
+    }
+  };
+
 
   public String getDn() {
     return this.dn;
-  }
-
-  public String getUid() {
-    try {
-      return (String) Arrays.stream(this.getClass().getDeclaredFields()).filter(field ->
-      {
-        field.setAccessible(true);
-        return field.isAnnotationPresent(Id.class);
-      }).findFirst().get().get(this);
-    } catch (IllegalAccessException e) {
-      throw new SlcwException(e.getMessage());
-    }
   }
 
   public void setDn(String dn) {

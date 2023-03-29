@@ -39,29 +39,31 @@ public class SlcwClientIT {
     serverConfig.setSchema(null);
     LDAPConnectionPool ldapConnectionPool = new LDAPConnectionPool(
         new LDAPConnection("127.0.0.1", PORT, USER_DN, PASSWORD), 1);
-    client = new SlcwClient(ldapConnectionPool, BASE_DN, User.class);
+    client = new SlcwClient<>(ldapConnectionPool, BASE_DN, User.class);
   }
 
   @Test
-  public void shouldGetById() throws LDAPException {
+  public void shouldGetById() {
     final User expectedUser = new User(UUID.randomUUID().toString(), "Surname", 6785949);
     client.add(expectedUser);
-    final OperationResult<User> actualUser = client.search(expectedUser.getUid());
+    final OperationResult<User> actualUser = client.search(expectedUser);
     assertEquals(expectedUser, actualUser.getData().get(0));
   }
 
   @Test
-  public void shouldReturnSuccessOnAddOperation() throws LDAPException {
+  public void shouldReturnSuccessOnAddOperation() {
     final User user = new User(UUID.randomUUID().toString(), "Surname", 6785949);
     final OperationResult<User> result = client.add(user);
     assertEquals("0 (success)", result.toString());
   }
 
   @Test
-  public void shouldReturnSuccessOnDeleteOperation() throws LDAPException {
+  public void shouldReturnSuccessOnDeleteOperation() {
     final User user = new User( UUID.randomUUID().toString(), "Surname", 6785949);
     client.add(user);
-    final User actualUser = client.search(user.getId()).getData().get(0);
+    User searchUser = new User();
+    searchUser.setId(user.getId());
+    final User actualUser = client.search(searchUser).getData().get(0);
     // DN is unique
     assertEquals(user.getDn(), actualUser.getDn());
 
@@ -74,14 +76,14 @@ public class SlcwClientIT {
     final User user = new User(UUID.randomUUID().toString(), "Surname", 6785949);
 
     client.add(user);
-    final OperationResult<User> operationResult = client.search(user.getId());
+    final OperationResult<User> operationResult = client.search(user);
     final User presentUser = operationResult.getData().get(0);
     assertEquals(user.getPhoneNumber(), presentUser.getPhoneNumber());
 
     user.setPhoneNumber(11111111);
     final OperationResult<User> result = client.update(user);
     assertEquals("0 (success)", result.toString());
-    final OperationResult<User> search2 = client.search(user.getId());
+    final OperationResult<User> search2 = client.search(user);
     final User modifiedUser = search2.getData().get(0);
     assertEquals(user.getPhoneNumber(), modifiedUser.getPhoneNumber());
   }

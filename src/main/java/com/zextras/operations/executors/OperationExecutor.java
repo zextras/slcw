@@ -9,13 +9,31 @@ import com.zextras.operations.results.OperationResult;
  */
 public interface OperationExecutor<T extends SlcwBean> {
 
+  /**
+   * Creates the object in the database.
+   *
+   * @param bean managed object
+   * @return result of operation, data always empty
+   */
   OperationResult<T> add(T bean);
 
+  /**
+   * Updates the object in database according to stored data
+   * @param bean managed object
+   * @return result of operation, data always empty
+   */
   OperationResult<T> update(T bean);
 
-  OperationResult<T> delete(T bean);
+  /**
+   * Deleted the object in database
+   * @param bean managed object
+   * @return result of operation, data always empty
+   */  OperationResult<T> delete(T bean);
 
-  OperationResult<T> search(String baseDn, String filter);
-
-  OperationResult<T> search(String uid);
+  /**
+   * Searches objects in database according to bean information
+   * @param bean managed object
+   * @return result of operation, data contains result of search
+   */
+  OperationResult<T> search(T bean);
 }

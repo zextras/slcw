@@ -1,11 +1,9 @@
 package com.zextras;
 
 import com.unboundid.ldap.sdk.Filter;
-import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPConnectionPool;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.LDAPResult;
-import com.unboundid.ldap.sdk.LDAPSearchException;
 import com.unboundid.ldap.sdk.SearchRequest;
 import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchScope;
@@ -13,10 +11,13 @@ import com.zextras.operations.executors.OperationExecutor;
 import com.zextras.operations.results.OperationResult;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.converters.SlcwConverter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Objects;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
- * Manages access in LDAP on extensions of {@link SlcwBean} through connections and operations.
+ * Manages LDAP operations for a {@link SlcwBean} type.
  *
  * @author Yuliya Aheeva
  * @since 1.0.0
@@ -28,6 +29,7 @@ public class SlcwClient<T extends SlcwBean> implements OperationExecutor<T> {
   private final String baseDn;
 
   /**
+   *
    * @param ldapConnectionPool connection pool to LDAP
    * @param baseDn base dn for the object as parent dn
    * @param clazz bean class for objects we are going to manage
@@ -38,14 +40,35 @@ public class SlcwClient<T extends SlcwBean> implements OperationExecutor<T> {
     this.beanClazz = clazz;
   }
 
+  /**
+   * Returns basedDn if bean does not have an id or id has no value, else id + baseDn.
+   *
+   * @param bean managed object
+   * @return full dn
+   */
+  private String getFullDn(T bean) {
+    final String idValue = bean.getIdStringValue();
+    if (bean.hasIdAttribute()) {
+      if ((!Objects.equals(idValue, ""))) {
+        return bean.getIdAttrName() + "=" + idValue + ", " + baseDn;
+      }
+    }
+    return baseDn;
+  }
+
+
+
   @Override
   public OperationResult<T> add(T bean) {
     try {
+      bean.setDn(getFullDn(bean));
       LDAPResult result = ldapConnectionPool.add(bean.getDn(), SlcwConverter.convertFieldsToAttributes(bean));
       return new OperationResult<T>(result.getResultCode().getName(),
           result.getResultCode().intValue(), new ArrayList<T>());
     } catch (LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
+    } catch (Exception e) {
+      throw new SlcwException(e.getMessage());
     }
   }
 
@@ -71,21 +94,34 @@ public class SlcwClient<T extends SlcwBean> implements OperationExecutor<T> {
     }
   }
 
+  /**
+   * Searches specific object if object has an id, else matches all entries directly underneath baseDn.
+   *
+   * @param bean managed object
+   * @return
+   */
   @Override
-  public OperationResult<T> search(String baseDn, String filter) {
+  public OperationResult<T> search(T bean) {
     try {
-      SearchRequest searchRequest = new SearchRequest(baseDn, SearchScope.ONE, filter);
+      SearchScope searchScope;
+      Filter filter;
+      if (Objects.equals("", bean.getIdStringValue())) {
+        searchScope = SearchScope.ONE;
+        //TODO: this is broken, create a filter based on all other fields
+        filter = Filter.createApproximateMatchFilter(bean.getIdAttrName(), bean.getIdStringValue());
+      } else {
+        searchScope = SearchScope.BASE;
+        filter = Filter.createEqualityFilter(bean.getIdAttrName(), bean.getIdStringValue());
+      }
+      SearchRequest searchRequest = new SearchRequest(getFullDn(bean), searchScope, filter);
       final SearchResult result = ldapConnectionPool.search(searchRequest);
       return new OperationResult<T>(result.getResultCode().getName(),
           result.getResultCode().intValue(), SlcwConverter.convertEntriesToBeans(result.getSearchEntries(), beanClazz));
     } catch (LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
+    } catch (Exception e) {
+      throw new SlcwException(e.getMessage());
     }
-  }
-
-  @Override
-  public OperationResult<T> search(String uid) {
-    return this.search(baseDn, Filter.createEqualityFilter("uid", uid).toNormalizedString());
   }
 
 }
