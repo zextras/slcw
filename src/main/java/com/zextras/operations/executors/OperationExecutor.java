@@ -1,21 +1,39 @@
 package com.zextras.operations.executors;
 
+import com.zextras.SlcwBean;
 import com.zextras.operations.results.OperationResult;
-import com.zextras.persistence.mapping.entries.Entry;
 
 /**
  * An OperationExecutor relies on a separate executor to actually execute the tasks.
  * <p></p>
- * All Known Implementing Classes: {@link AbstractOperationExecutor},
- * {@link LdapOperationExecutor}.
  */
-public interface OperationExecutor<T extends Entry> {
+public interface OperationExecutor<T extends SlcwBean> {
 
-  OperationResult executeAddOperation(T entry);
+  /**
+   * Creates the object in the database.
+   *
+   * @param bean managed object
+   * @return result of operation, data always empty
+   */
+  OperationResult<T> add(T bean);
 
-  OperationResult executeUpdateOperation(T entry);
+  /**
+   * Updates the object in database according to stored data
+   * @param bean managed object
+   * @return result of operation, data always empty
+   */
+  OperationResult<T> update(T bean);
 
-  OperationResult executeDeleteOperation(T entry);
+  /**
+   * Deleted the object in database
+   * @param bean managed object
+   * @return result of operation, data always empty
+   */  OperationResult<T> delete(T bean);
 
-  OperationResult executeGetOperation(T entry);
+  /**
+   * Searches objects in database according to bean information
+   * @param bean managed object
+   * @return result of operation, data contains result of search
+   */
+  OperationResult<T> search(T bean);
 }

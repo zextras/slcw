@@ -3,7 +3,7 @@ package com.zextras.slcwBeans;
 import com.zextras.persistence.annotations.Id;
 import com.zextras.persistence.annotations.Table;
 
-@Table(property = "ou", name = "tickets")
+@Table(objectClass = "dcObject")
 public class Ticket {
   @Id
   Long id;

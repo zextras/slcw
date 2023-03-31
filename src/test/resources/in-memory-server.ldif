@@ -3,6 +3,16 @@ objectClass: domain
 objectClass: top
 dc: example
 
+dn: cn=test,dc=example,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: test
+sn: test
+uid: test
+userPassword: password
+
 dn: ou=users,dc=example,dc=com
 objectClass: organizationalUnit
 objectClass: top

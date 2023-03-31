@@ -1,48 +1,43 @@
 package com.zextras.persistence.converters;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.unboundid.ldap.sdk.Attribute;
-import com.unboundid.ldap.sdk.Modification;
-import com.unboundid.ldap.sdk.ModificationType;
-import com.zextras.persistence.mapping.entries.SlcwEntry;
-import com.zextras.persistence.mapping.SlcwProperty;
-import java.util.HashMap;
+import com.zextras.slcwBeans.User;
 import java.util.List;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
-class SlcwConverterTests {
-
-  private SlcwEntry entry;
-
-  @BeforeEach
-  void setUp() {
-    entry = new SlcwEntry("dc=example,dc=com");
-    Map<String, SlcwProperty> fields = new HashMap<>();
-    fields.put("givenName", new SlcwProperty("name", "Name"));
-    fields.put("sn", new SlcwProperty("surname", "Surname"));
-    fields.put("homePhone", new SlcwProperty("phoneNumber", 675479980));
-    entry.setFields(fields);
-  }
+public class SlcwConverterTests {
 
   @Test
-  void shouldConvertFieldsToAttributes() {
-    final List<Attribute> attributes = SlcwConverter.convertFieldsToAttributes(entry);
-    assertTrue(attributes.contains(new Attribute("givenName", "Name")));
-    assertTrue(attributes.contains(new Attribute("sn", "Surname")));
-    assertTrue(attributes.contains(new Attribute("homePhone", "675479980")));
-  }
+  public void shouldMapBeanToAttributes() {
+    final User user = new User();
+    user.setId("aaa"); // cn
+    user.setDn("aaa,bb,ccc"); //dn -> this is not an attribute
+    user.setPhoneNumber(3987654); // homephone
+    user.setName("name"); //givenName
+    user.setSurname("surname"); //sn
+    final List<Attribute> attributes = SlcwConverter.convertBeanToAttributes(user);
+    Assert.assertEquals(5, attributes.size());
+    attributes.forEach(
+        attribute -> {
+          switch (attribute.getName()) {
+            case "cn":
+              Assert.assertEquals("aaa", attribute.getValue());
+              break;
+            case "homephone":
+              Assert.assertEquals("3987654", attribute.getValue());
+              break;
+            case "givenName":
+              Assert.assertEquals("name", attribute.getValue());
+              break;
+            case "sn":
+              Assert.assertEquals("surname", attribute.getValue());
+              break;
+            case "objectclass":
+              Assert.assertEquals(new String[]{"inetOrgPerson", "organizationalPerson"}, attribute.getValues());
+              break;
+          }
 
-  @Test
-  void shouldConvertFieldsToModifications() {
-    final List<Modification> modifications = SlcwConverter.convertFieldsToModifications(entry);
-    assertTrue(modifications.contains(
-        new Modification(ModificationType.REPLACE, "givenName", "Name")));
-    assertTrue(modifications.contains(
-        new Modification(ModificationType.REPLACE, "sn", "Surname")));
-    assertTrue(modifications.contains(
-        new Modification(ModificationType.REPLACE, "homePhone", "675479980")));
+        });
   }
 }

@@ -1,132 +1,125 @@
 package com.zextras;
 
-import com.unboundid.ldap.sdk.*;
-import com.zextras.operations.executors.LdapOperationExecutor;
-import com.zextras.operations.results.LdapOperationResult;
+import com.unboundid.ldap.sdk.Filter;
+import com.unboundid.ldap.sdk.LDAPConnectionPool;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.LDAPResult;
+import com.unboundid.ldap.sdk.SearchRequest;
+import com.unboundid.ldap.sdk.SearchResult;
+import com.unboundid.ldap.sdk.SearchScope;
+import com.zextras.operations.executors.OperationExecutor;
 import com.zextras.operations.results.OperationResult;
 import com.zextras.persistence.SlcwException;
 import com.zextras.persistence.converters.SlcwConverter;
-import com.zextras.persistence.mapping.entries.SlcwEntry;
-import com.zextras.persistence.mapping.mappers.SlcwMapper;
-import com.zextras.utils.ObjectFactory;
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
- * Main entrypoint for the library.
+ * Manages LDAP operations for a {@link SlcwBean} type.
  *
  * @author Yuliya Aheeva
  * @since 1.0.0
  */
-public class SlcwClient {
+public class SlcwClient<T extends SlcwBean> implements OperationExecutor<T> {
 
-  private LDAPConnection connection;
-  private String baseDn;
-  private final SlcwMapper mapper = new SlcwMapper();
+  private final LDAPConnectionPool ldapConnectionPool;
+  private final Class<T> beanClazz;
+  private final String baseDn;
 
   /**
-   * Creates a client that should be initialized with
-   * {@link #initialize(String, int, String, String, String) initialize} method.
+   *
+   * @param ldapConnectionPool connection pool to LDAP
+   * @param baseDn base dn for the object as parent dn
+   * @param clazz bean class for objects we are going to manage
    */
-  public SlcwClient() {
-
+  public SlcwClient(LDAPConnectionPool ldapConnectionPool, String baseDn, Class<T> clazz) {
+    this.ldapConnectionPool = ldapConnectionPool;
+    this.baseDn = baseDn;
+    this.beanClazz = clazz;
   }
 
   /**
-   * Creates a client with an opened connection.
+   * Returns basedDn if bean does not have an id or id has no value, else id + baseDn.
    *
-   * @param connection an opened connection to the server.
-   * @param baseDn     the starting point on the server.
+   * @param bean managed object
+   * @return full dn
    */
-  public SlcwClient(LDAPConnection connection, String baseDn) {
-    this.baseDn = baseDn;
-    this.connection = connection;
+  private String getFullDn(T bean) {
+    final String idValue = bean.getIdStringValue();
+    if (bean.hasIdAttribute()) {
+      if ((!Objects.equals(idValue, ""))) {
+        return bean.getIdAttrName() + "=" + idValue + ", " + baseDn;
+      }
+    }
+    return baseDn;
   }
 
-  /**
-   * Authenticate a user and open the client connection, otherwise throws an exception.
-   *
-   * @param host     a network layer host address.
-   * @param port     a port on a host that connects it to the storage system.
-   * @param bindDN   a Username used to connect to the server.
-   * @param password a secret word or phrase that allows access to the server.
-   * @param baseDn   the starting point on the server.
-   */
-  public void initialize(String host, int port, String bindDN, String password, String baseDn) {
-    this.baseDn = baseDn;
+
+
+  @Override
+  public OperationResult<T> add(T bean) {
     try {
-      connection = new LDAPConnection(host, port, bindDN, password);
+      bean.setDn(getFullDn(bean));
+      LDAPResult result = ldapConnectionPool.add(bean.getDn(), SlcwConverter.convertBeanToAttributes(bean));
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<T>());
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    } catch (Exception e) {
+      throw new SlcwException(e.getMessage());
+    }
+  }
+
+  @Override
+  public OperationResult<T> update(T bean) {
+    try {
+      LDAPResult result = ldapConnectionPool.modify(bean.getDn(), SlcwConverter.convertFieldsToModifications(bean));
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<>());
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    }
+  }
+
+  @Override
+  public OperationResult<T> delete(T bean) {
+    try {
+      LDAPResult result = ldapConnectionPool.delete(bean.getDn());
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), new ArrayList<>());
     } catch (LDAPException e) {
       throw new SlcwException(e.getExceptionMessage());
     }
   }
 
   /**
-   * Gets an object from a record stored in the structure, otherwise throws an exception.
+   * Searches specific object if object has an id, else matches all entries directly underneath baseDn.
    *
-   * @param id    a unique identifier that marks that particular record as unique from every other
-   *              record.
-   * @param clazz type of the class which represents an object that you wanted to get. (ex.
-   *              User.class)
-   * @param <T>   is a conventional letter that stands for "Type".
-   * @return an object of the given class.
+   * @param bean managed object
+   * @return
    */
-  public <T> T getById(String id, Class<T> clazz) {
-    T object = ObjectFactory.newObject(clazz);
-    SlcwEntry entry = new SlcwEntry(baseDn);
-    entry.getId().setPropertyValue(id);
-    mapper.map(object, entry);
-
-    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
-    LdapOperationResult result = executor.executeGetOperation(entry);
-    entry.setAttributes(result.getAttributes());
-
-    mapper.map(entry, object);
-    return object;
+  @Override
+  public OperationResult<T> search(T bean) {
+    try {
+      SearchScope searchScope;
+      Filter filter;
+      if (Objects.equals("", bean.getIdStringValue())) {
+        searchScope = SearchScope.ONE;
+        //TODO: this is broken, create a filter based on all other fields
+        filter = Filter.createApproximateMatchFilter(bean.getIdAttrName(), bean.getIdStringValue());
+      } else {
+        searchScope = SearchScope.BASE;
+        filter = Filter.createEqualityFilter(bean.getIdAttrName(), bean.getIdStringValue());
+      }
+      SearchRequest searchRequest = new SearchRequest(getFullDn(bean), searchScope, filter);
+      final SearchResult result = ldapConnectionPool.search(searchRequest);
+      return new OperationResult<T>(result.getResultCode().getName(),
+          result.getResultCode().intValue(), SlcwConverter.convertEntriesToBeans(result.getSearchEntries(), beanClazz));
+    } catch (LDAPException e) {
+      throw new SlcwException(e.getExceptionMessage());
+    } catch (Exception e) {
+      throw new SlcwException(e.getMessage());
+    }
   }
 
-  /**
-   * Creates a new entry (record) in the structure.*
-   *
-   * @param object an object that you want to save in the structure.
-   * @param <T>    is a conventional letter that stands for "Type".
-   * @return a result of an adding operation. (ex. "0 (success)").
-   */
-  public <T> OperationResult add(T object) {
-    SlcwEntry entry = new SlcwEntry(baseDn);
-    mapper.map(object, entry);
-    entry.setAttributes(SlcwConverter.convertFieldsToAttributes(entry));
-
-    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
-    return executor.executeAddOperation(entry);
-  }
-
-  /**
-   * Alter the content of an entry (record) in the structure.
-   *
-   * @param object an object that you want to modify in the structure.
-   * @param <T>    is a conventional letter that stands for "Type".
-   * @return a result of an adding operation. (ex. "0 (success)").
-   */
-  public <T> OperationResult update(T object) {
-    SlcwEntry entry = new SlcwEntry(baseDn);
-    mapper.map(object, entry);
-    entry.setAttributes(SlcwConverter.convertFieldsToModifications(entry));
-
-    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
-    return executor.executeUpdateOperation(entry);
-  }
-
-  /**
-   * Remove an entry (record) from the structure.
-   *
-   * @param object an object that you want to delete from the structure.
-   * @param <T>    is a conventional letter that stands for "Type".
-   * @return a result of an adding operation. (ex. "0 (success)").
-   */
-  public <T> OperationResult delete(T object) {
-    SlcwEntry entry = new SlcwEntry(baseDn);
-    mapper.map(object, entry);
-
-    LdapOperationExecutor executor = new LdapOperationExecutor(connection);
-    return executor.executeDeleteOperation(entry);
-  }
 }

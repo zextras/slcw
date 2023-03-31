@@ -6,30 +6,26 @@ import com.zextras.persistence.annotations.*;
 import java.util.Objects;
 
 @Entity
-@Table(property = "ou", name = "users")
+@Table(objectClass = {"inetOrgPerson", "organizationalPerson"})
 public class User extends SlcwBean {
 
   @Id(name = "cn")
   private String id;
-  @ObjectClass
-  private String objectClass;
   @Column(name = "givenName")
   private String name;
   @Column(name = "sn")
   private String surname;
   @Column(name = "homePhone")
   private Long phoneNumber;
-  private int anotherField;
 
-  public User() {
-  }
-
-  public User(String objectClass, String name, String surname, long number) {
+  public User(String name, String surname, long phoneNumber) {
     this.id = name + " " + surname;
-    this.objectClass = objectClass;
     this.name = name;
     this.surname = surname;
-    this.phoneNumber = number;
+    this.phoneNumber = phoneNumber;
+  }
+
+  public User() {
   }
 
   public void setName(String name) {
@@ -52,9 +48,6 @@ public class User extends SlcwBean {
     this.id = id;
   }
 
-  public void setObjectClass(String objectClass) {
-    this.objectClass = objectClass;
-  }
 
   public String getSurname() {
     return surname;
@@ -62,10 +55,6 @@ public class User extends SlcwBean {
 
   public long getPhoneNumber() {
     return phoneNumber;
-  }
-
-  public String getObjectClass() {
-    return objectClass;
   }
 
   public String getId() {
@@ -81,13 +70,12 @@ public class User extends SlcwBean {
       return false;
     }
     User user = (User) o;
-    return anotherField == user.anotherField && id.equals(user.id) && Objects.equals(objectClass,
-        user.objectClass) && Objects.equals(name, user.name) && Objects.equals(surname,
+    return id.equals(user.id) && Objects.equals(name, user.name) && Objects.equals(surname,
         user.surname) && Objects.equals(phoneNumber, user.phoneNumber);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, objectClass, name, surname, phoneNumber, anotherField);
+    return Objects.hash(id, name, surname, phoneNumber);
   }
 }
