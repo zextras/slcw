@@ -43,12 +43,24 @@ public class SpringUser {
 
   @Id
   private Name id;
-  @DnAttribute(value = "cn", index = 0)
+
+  @DnAttribute(value = "cn", index = 1)
   @Attribute(name = "cn")
   private String name;
 
   @Attribute(name = "sn")
   private String surname;
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  @Attribute(name = "mail")
+  private String email;
 
   @Attribute(name = "homePhone")
   private Long phoneNumber;

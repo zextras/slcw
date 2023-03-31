@@ -10,13 +10,16 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.zextras.SlcwClient;
 import com.zextras.slcwBeans.User;
 import java.util.Hashtable;
+import java.util.List;
 import javax.naming.NamingException;
 import javax.naming.ldap.InitialLdapContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.query.LdapQueryBuilder;
 
 public class SpringLdapTest {
 
@@ -51,7 +54,17 @@ public class SpringLdapTest {
     final SpringUser springUser = new SpringUser();
     springUser.setName("name");
     springUser.setSurname("surname");
+    springUser.setEmail("झेक्ष्त्रास@झेक्ष्त्रास.भारत");
     ldapTemplate.create(springUser);
+
+    final String s = "?query=";
+    //parse it
+    final SpringUser gotUser = ldapTemplate.findByDn(springUser.getId(),  SpringUser.class);
+
+
+    Assertions.assertEquals(springUser.getName(), gotUser.getName());
+    Assertions.assertEquals(springUser.getSurname(), gotUser.getSurname());
+    Assertions.assertEquals(springUser.getPhoneNumber(), gotUser.getPhoneNumber());
   }
 
 }
